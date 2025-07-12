@@ -120,6 +120,7 @@ java {
 	targetCompatibility = JavaVersion.VERSION_21
 }
 
+/*
 task proguard(type: proguard.gradle.ProGuardTask) {
     dependsOn jar
     injars jar.archiveFile
@@ -152,4 +153,10 @@ task proguard(type: proguard.gradle.ProGuardTask) {
 remapJar {
     dependsOn proguard
     input = file("build/libs/${project.archives_base_name}-${version}-proguarded.jar")
+}
+*/
+
+remapJar {
+    dependsOn jar
+    input = jar.archiveFile
 }
