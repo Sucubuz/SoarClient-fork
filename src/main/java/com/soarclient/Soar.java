@@ -21,7 +21,7 @@ public class Soar {
 
 	private final static Soar instance = new Soar();
 
-	private final String name = "Soar";
+	private final String name = "Soar-fork";
 	private final String version = "8.0";
 
 	private long launchTime;
