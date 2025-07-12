@@ -5,7 +5,8 @@
 	"name": "SoarClient",
 	"description": "Modern and powerful client for Minecraft PvP",
 	"authors": [
-		"EldoDebug"
+		"EldoDebug",
+		"Eatgrapes"
 	],
 	"contact": {
 		"homepage": "https://soarclient.com/"
