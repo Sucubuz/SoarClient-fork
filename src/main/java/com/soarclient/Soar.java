@@ -40,7 +40,6 @@ public class Soar {
 		JCefBrowser.download();
 		Fonts.loadAll();
 		FileLocation.init();
-		I18n.loadLanguageNames();  
         I18n.setLanguage(Language.ENGLISH);
 
 		launchTime = System.currentTimeMillis();
