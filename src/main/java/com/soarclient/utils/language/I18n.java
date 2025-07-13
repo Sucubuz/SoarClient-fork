@@ -28,46 +28,23 @@ public final class I18n {
 	}  
   
 	/**  
-	 * Loads language names from the dedicated language.lang file  
-	 */  
-	public static void loadLanguageNames() {  
-		String resourcePath = "assets/soar/languages/language.lang";  
-		  
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(  
-				I18n.class.getClassLoader().getResourceAsStream(resourcePath), StandardCharsets.UTF_8))) {  
-  
-			reader.lines().filter(line -> !line.isEmpty() && !line.startsWith("#"))  
-					.map(line -> line.split("=", 2))  
-					.filter(parts -> parts.length == 2)  
-					.forEach(parts -> translateMap.put(parts[0].trim(), parts[1].trim()));  
-		} catch (Exception e) {  
-			e.printStackTrace();  
-		}  
-	}  
-  
-	/**  
 	 * Loads the language file for the specified language  
 	 * @param language The language to load translations for  
 	 */  
 	private static void load(Language language) {  
   
 		String resourcePath = String.format("assets/soar/languages/%s.lang", language.getId());  
-		  
-		// Don't clear translateMap to preserve language names  
-		Map<String, String> tempMap = new HashMap<>(translateMap);  
+		translateMap.clear();  
   
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(  
 				I18n.class.getClassLoader().getResourceAsStream(resourcePath), StandardCharsets.UTF_8))) {  
   
 			reader.lines().filter(line -> !line.isEmpty() && !line.startsWith("#")).map(line -> line.split("=", 2))  
 					.filter(parts -> parts.length == 2)  
-					.forEach(parts -> tempMap.put(parts[0].trim(), parts[1].trim()));  
+					.forEach(parts -> translateMap.put(parts[0].trim(), parts[1].trim()));  
 		} catch (Exception e) {  
 			e.printStackTrace();  
 		}  
-		  
-		translateMap.clear();  
-		translateMap.putAll(tempMap);  
 	}  
   
 	/**  
@@ -81,9 +58,11 @@ public final class I18n {
   
 	/**  
 	 * Gets the current language, returns ENGLISH as default if currentLanguage is null  
+	 * This fixes the null language bug while maintaining language switching functionality  
 	 * @return The current language, never null  
 	 */  
 	public static Language getCurrentLanguage() {  
+		// Return default language if currentLanguage is null to prevent null pointer issues  
 		return currentLanguage != null ? currentLanguage : Language.ENGLISH;  
 	}  
 }

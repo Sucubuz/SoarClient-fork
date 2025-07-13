@@ -38,12 +38,10 @@ public class ModMenuSettings extends Mod {
             this, true);  
     private NumberSetting blurIntensitySetting = new NumberSetting("setting.blurintensity",  
             "setting.blurintensity.description", Icon.BLUR_LINEAR, this, 5, 1, 20, 1);  
+      
+    // 使用固定的语言选项，避免I18n初始化问题  
     private ComboSetting languageSetting = new ComboSetting("setting.language", "setting.language.description",  
-            Icon.LANGUAGE, this, Arrays.asList(  
-                I18n.get("language.english"),   
-                I18n.get("language.chinese"),   
-                I18n.get("language.japanese")  
-            ), I18n.get("language.english"));  
+            Icon.LANGUAGE, this, Arrays.asList("English", "中文", "日本語"), "English");  
   
     private Screen modMenu;  
   
@@ -66,49 +64,33 @@ public class ModMenuSettings extends Mod {
         String langOption = getLanguageOptionFromEnum(currentLang);  
         languageSetting.setOption(langOption);  
         previousLanguageOption = langOption;  
-          
-        // Update options list with current translations  
-        updateLanguageSettingOptions();  
     }  
-  
-private void updateLanguageSettingOptions() {  
-    String currentOption = languageSetting.getOption();  
-      
-    languageSetting = new ComboSetting("setting.language", "setting.language.description",  
-            Icon.LANGUAGE, this, Arrays.asList(  
-                I18n.get("language.english"),  
-                I18n.get("language.chinese"),   
-                I18n.get("language.japanese")  
-            ), I18n.get("language.english"));  
-       
-    if (languageSetting.has(currentOption)) {  
-        languageSetting.setOption(currentOption);  
-    }  
-}  
   
     private String getLanguageOptionFromEnum(Language language) {  
         switch (language) {  
             case CHINESE:  
-                return I18n.get("language.chinese");  
+                return "中文";  
             case JAPANESE:  
-                return I18n.get("language.japanese");  
+                return "日本語";  
             default:  
-                return I18n.get("language.english");  
+                return "English";  
         }  
     }  
   
     private Language getLanguageEnumFromOption(String option) {  
-        if (option.equals(I18n.get("language.chinese"))) {  
-            return Language.CHINESE;  
-        } else if (option.equals(I18n.get("language.japanese"))) {  
-            return Language.JAPANESE;  
-        } else {  
-            return Language.ENGLISH;  
+        switch (option) {  
+            case "中文":  
+                return Language.CHINESE;  
+            case "日本語":  
+                return Language.JAPANESE;  
+            default:  
+                return Language.ENGLISH;  
         }  
     }  
   
     public final EventBus.EventListener<ClientTickEvent> onClientTick = event -> {  
           
+        // 只初始化一次，避免重复UI  
         if (!languageInitialized && I18n.getCurrentLanguage() != null) {  
             initializeLanguageSetting();  
             languageInitialized = true;  
@@ -136,7 +118,6 @@ private void updateLanguageSettingOptions() {
               
             if (I18n.getCurrentLanguage() != targetLanguage) {  
                 I18n.setLanguage(targetLanguage);  
-                updateLanguageSettingOptions();  
                   
                 if (modMenu != null) {  
                     modMenu = null;  
