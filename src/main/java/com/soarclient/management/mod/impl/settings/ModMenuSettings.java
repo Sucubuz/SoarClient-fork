@@ -56,9 +56,31 @@ public class ModMenuSettings extends Mod {
     private void initializeLanguageSetting() {  
         Language currentLang = I18n.getCurrentLanguage();  
         if (currentLang != null) {  
-            String langOption = currentLang == Language.CHINESE ? "中文" : "English";  
+            String langOption = getLanguageOptionFromEnum(currentLang);  
             languageSetting.setOption(langOption);  
             previousLanguageOption = langOption;  
+        }  
+    }  
+  
+  private String getLanguageOptionFromEnum(Language language) {  
+        switch (language) {  
+            case CHINESE:  
+                return "中文";  
+            case JAPANESE:  
+                return "日本語";  
+            default:  
+                return "English";  
+        }  
+    }  
+  
+    private Language getLanguageEnumFromOption(String option) {  
+        switch (option) {  
+            case "中文":  
+                return Language.CHINESE;  
+            case "日本語":  
+                return Language.JAPANESE;  
+            default:  
+                return Language.ENGLISH;  
         }  
     }  
   
@@ -73,22 +95,22 @@ public class ModMenuSettings extends Mod {
             client.setScreen(modMenu);  
         }  
   
-        // Language Handler 
+        // Language Handler  
         handleLanguageChange();  
     };  
   
     private void handleLanguageChange() {  
         String currentLanguageOption = languageSetting.getOption();  
-           
+          
         if (!currentLanguageOption.equals(previousLanguageOption)) {  
-            Language targetLanguage = currentLanguageOption.equals("中文") ? Language.CHINESE : Language.ENGLISH;  
+            Language targetLanguage = getLanguageEnumFromOption(currentLanguageOption);  
               
             if (I18n.getCurrentLanguage() != targetLanguage) {  
                 I18n.setLanguage(targetLanguage);  
                   
-                // rebuild modui  
+                // Rebuild mod UI  
                 if (modMenu != null) {  
-                    modMenu = null; 
+                    modMenu = null;  
                 }  
             }  
               

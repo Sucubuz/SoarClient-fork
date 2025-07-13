@@ -15,6 +15,9 @@ public final class I18n {
 	}
 
 	public static void setLanguage(Language language) {
+	if (language == null) {
+	language = Language.ENGLISH; 		
+	}
 		currentLanguage = language;
 		load(language);
 	}
@@ -39,7 +42,8 @@ public final class I18n {
 		return translateMap.getOrDefault(key, "null");
 	}
 
-	public static Language getCurrentLanguage() {
-		return currentLanguage;
-	}
+	public static Language getCurrentLanguage() {  
+		// Return default language if currentLanguage is null to prevent null pointer issues  
+		return currentLanguage != null ? currentLanguage : Language.ENGLISH;  
+	}  
 }
