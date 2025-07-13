@@ -64,6 +64,9 @@ mod.yawdisplay.description=显示你的偏航角
 mod.pitchdisplay.name=俯仰角显示
 mod.pitchdisplay.description=显示你的俯仰角
 
+mod.inventorydisplay.name=物品栏显示
+mod.inventorydisplay.description=显示你的物品栏中的物品
+
 mod.jumpresetindicator.name=跳跃重置指示器
 mod.jumpresetindicator.description=指示跳跃重置是否正确执行
 

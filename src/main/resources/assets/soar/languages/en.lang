@@ -79,6 +79,9 @@ mod.keystrokes.description=Display pressed keys
 mod.mousestrokes.name=Mouse Strokes
 mod.mousestrokes.description=Display mouse movements
 
+mod.inventorydisplay.name=Inventory Display 
+mod.inventorydisplay.description=Display your inventory items
+
 mod.musicinfo.name=Music Info
 mod.musicinfo.description=Display the currently playing music
 

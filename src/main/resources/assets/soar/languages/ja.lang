@@ -64,6 +64,9 @@ mod.yawdisplay.description=現在のヨー角を表示
 mod.pitchdisplay.name=ピッチ表示
 mod.pitchdisplay.description=現在のピッチ角を表示
 
+mod.inventorydisplay.name=インベントリ表示
+mod.inventorydisplay.description=インベントリ内のアイテムを表示する
+
 mod.jumpresetindicator.name=ジャンプリセットインジケーター
 mod.jumpresetindicator.description=ジャンプリセットが正しく実行されたか表示
 
