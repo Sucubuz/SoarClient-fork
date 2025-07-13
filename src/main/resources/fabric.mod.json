@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
 	"id": "soarclient",
-	"version": "${version}",
-	"name": "SoarClient",
+	"version": "8.0.0",
+	"name": "SoarClient-fork",
 	"description": "Modern and powerful client for Minecraft PvP",
 	"authors": [
 		"EldoDebug",
@@ -11,6 +11,7 @@
 	"contact": {
 		"homepage": "https://soarclient.com/"
 	},
+	"icon": "assets/soar/logo.png",
 	"environment": "*",
 	"mixins": [
 		"soar.mixins.json"
