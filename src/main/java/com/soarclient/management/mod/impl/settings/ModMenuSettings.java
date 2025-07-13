@@ -71,13 +71,20 @@ public class ModMenuSettings extends Mod {
         updateLanguageSettingOptions();  
     }  
   
-    private void updateLanguageSettingOptions() {  
-        languageSetting.setOptions(Arrays.asList(  
-            I18n.get("language.english"),  
-            I18n.get("language.chinese"),   
-            I18n.get("language.japanese")  
-        ));  
+private void updateLanguageSettingOptions() {  
+    String currentOption = languageSetting.getOption();  
+      
+    languageSetting = new ComboSetting("setting.language", "setting.language.description",  
+            Icon.LANGUAGE, this, Arrays.asList(  
+                I18n.get("language.english"),  
+                I18n.get("language.chinese"),   
+                I18n.get("language.japanese")  
+            ), I18n.get("language.english"));  
+       
+    if (languageSetting.has(currentOption)) {  
+        languageSetting.setOption(currentOption);  
     }  
+}  
   
     private String getLanguageOptionFromEnum(Language language) {  
         switch (language) {  
