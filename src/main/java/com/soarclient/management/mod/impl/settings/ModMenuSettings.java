@@ -25,7 +25,7 @@ import net.minecraft.client.util.InputUtil;
 public class ModMenuSettings extends Mod {  
   
     private static ModMenuSettings instance;  
-    private String previousLanguageOption = "English";  
+    private String previousLanguageOption = "language.english";  
     private boolean languageInitialized = false;  
   
     private KeybindSetting keybindSetting = new KeybindSetting("setting.keybind", "setting.keybind.description",  
@@ -39,9 +39,8 @@ public class ModMenuSettings extends Mod {
     private NumberSetting blurIntensitySetting = new NumberSetting("setting.blurintensity",  
             "setting.blurintensity.description", Icon.BLUR_LINEAR, this, 5, 1, 20, 1);  
       
-    // 使用固定的语言选项，避免I18n初始化问题  
     private ComboSetting languageSetting = new ComboSetting("setting.language", "setting.language.description",  
-            Icon.LANGUAGE, this, Arrays.asList("English", "中文", "日本語"), "English");  
+            Icon.LANGUAGE, this, Arrays.asList("language.english", "language.chinese", "language.japanese"), "language.english");  
   
     private Screen modMenu;  
   
@@ -69,28 +68,26 @@ public class ModMenuSettings extends Mod {
     private String getLanguageOptionFromEnum(Language language) {  
         switch (language) {  
             case CHINESE:  
-                return "中文";  
+                return "language.chinese";  
             case JAPANESE:  
-                return "日本語";  
+                return "language.japanese";  
             default:  
-                return "English";  
+                return "language.english";  
         }  
     }  
   
     private Language getLanguageEnumFromOption(String option) {  
-        switch (option) {  
-            case "中文":  
-                return Language.CHINESE;  
-            case "日本語":  
-                return Language.JAPANESE;  
-            default:  
-                return Language.ENGLISH;  
+        if (option.contains("chinese")) {  
+            return Language.CHINESE;  
+        } else if (option.contains("japanese")) {  
+            return Language.JAPANESE;  
+        } else {  
+            return Language.ENGLISH;  
         }  
     }  
   
     public final EventBus.EventListener<ClientTickEvent> onClientTick = event -> {  
           
-        // 只初始化一次，避免重复UI  
         if (!languageInitialized && I18n.getCurrentLanguage() != null) {  
             initializeLanguageSetting();  
             languageInitialized = true;  
