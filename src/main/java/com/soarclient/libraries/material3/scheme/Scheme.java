@@ -27,6 +27,7 @@ import com.soarclient.libraries.material3.palettes.CorePalette;
  *             https://github.com/material-foundation/material-color-utilities/blob/main/make_schemes.md
  *             for migration guidance.
  */
+@Deprecated
 public class Scheme {
 	private int primary;
 	private int onPrimary;
