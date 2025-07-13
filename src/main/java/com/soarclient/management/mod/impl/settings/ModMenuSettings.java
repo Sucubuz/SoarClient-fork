@@ -39,7 +39,11 @@ public class ModMenuSettings extends Mod {
     private NumberSetting blurIntensitySetting = new NumberSetting("setting.blurintensity",  
             "setting.blurintensity.description", Icon.BLUR_LINEAR, this, 5, 1, 20, 1);  
     private ComboSetting languageSetting = new ComboSetting("setting.language", "setting.language.description",  
-            Icon.LANGUAGE, this, Arrays.asList("English", "中文", "日本語"), "English");  
+            Icon.LANGUAGE, this, Arrays.asList(  
+                I18n.get("language.english"),   
+                I18n.get("language.chinese"),   
+                I18n.get("language.japanese")  
+            ), I18n.get("language.english"));  
   
     private Screen modMenu;  
   
@@ -49,14 +53,11 @@ public class ModMenuSettings extends Mod {
         instance = this;  
         this.setHidden(true);  
         this.setEnabled(true);  
-          
-        // Don't initialize language here - wait for I18n to be ready  
     }  
   
     private void initializeLanguageSetting() {  
         Language currentLang = I18n.getCurrentLanguage();  
           
-        // Ensure we have a valid language  
         if (currentLang == null) {  
             currentLang = Language.ENGLISH;  
             I18n.setLanguage(currentLang);  
@@ -65,33 +66,42 @@ public class ModMenuSettings extends Mod {
         String langOption = getLanguageOptionFromEnum(currentLang);  
         languageSetting.setOption(langOption);  
         previousLanguageOption = langOption;  
+          
+        // Update options list with current translations  
+        updateLanguageSettingOptions();  
+    }  
+  
+    private void updateLanguageSettingOptions() {  
+        languageSetting.setOptions(Arrays.asList(  
+            I18n.get("language.english"),  
+            I18n.get("language.chinese"),   
+            I18n.get("language.japanese")  
+        ));  
     }  
   
     private String getLanguageOptionFromEnum(Language language) {  
         switch (language) {  
             case CHINESE:  
-                return "中文";  
+                return I18n.get("language.chinese");  
             case JAPANESE:  
-                return "日本語";  
+                return I18n.get("language.japanese");  
             default:  
-                return "English";  
+                return I18n.get("language.english");  
         }  
     }  
   
     private Language getLanguageEnumFromOption(String option) {  
-        switch (option) {  
-            case "中文":  
-                return Language.CHINESE;  
-            case "日本語":  
-                return Language.JAPANESE;  
-            default:  
-                return Language.ENGLISH;  
+        if (option.equals(I18n.get("language.chinese"))) {  
+            return Language.CHINESE;  
+        } else if (option.equals(I18n.get("language.japanese"))) {  
+            return Language.JAPANESE;  
+        } else {  
+            return Language.ENGLISH;  
         }  
     }  
   
     public final EventBus.EventListener<ClientTickEvent> onClientTick = event -> {  
           
-        // Initialize language setting once when I18n is ready  
         if (!languageInitialized && I18n.getCurrentLanguage() != null) {  
             initializeLanguageSetting();  
             languageInitialized = true;  
@@ -104,14 +114,12 @@ public class ModMenuSettings extends Mod {
             client.setScreen(modMenu);  
         }  
   
-        // Language Handler  
         handleLanguageChange();  
     };  
   
     private void handleLanguageChange() {  
         String currentLanguageOption = languageSetting.getOption();  
           
-        // Skip if option is null or empty  
         if (currentLanguageOption == null || currentLanguageOption.isEmpty()) {  
             return;  
         }  
@@ -121,8 +129,8 @@ public class ModMenuSettings extends Mod {
               
             if (I18n.getCurrentLanguage() != targetLanguage) {  
                 I18n.setLanguage(targetLanguage);  
+                updateLanguageSettingOptions();  
                   
-                // Rebuild mod UI  
                 if (modMenu != null) {  
                     modMenu = null;  
                 }  
