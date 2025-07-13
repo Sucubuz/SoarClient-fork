@@ -26,6 +26,7 @@ public class ModMenuSettings extends Mod {
   
     private static ModMenuSettings instance;  
     private String previousLanguageOption = "English";  
+    private boolean languageInitialized = false;
   
     private KeybindSetting keybindSetting = new KeybindSetting("setting.keybind", "setting.keybind.description",  
             Icon.KEYBOARD, this, InputUtil.fromKeyCode(GLFW.GLFW_KEY_RIGHT_SHIFT, 0));  
@@ -49,18 +50,22 @@ public class ModMenuSettings extends Mod {
         this.setHidden(true);  
         this.setEnabled(true);  
           
-        // init language 
-        initializeLanguageSetting();  
+        //NO init language  
     }  
   
-    private void initializeLanguageSetting() {  
-        Language currentLang = I18n.getCurrentLanguage();  
-        if (currentLang != null) {  
-            String langOption = getLanguageOptionFromEnum(currentLang);  
-            languageSetting.setOption(langOption);  
-            previousLanguageOption = langOption;  
-        }  
+private void initializeLanguageSetting() {  
+    Language currentLang = I18n.getCurrentLanguage();  
+      
+    // Ensure we have a valid language  
+    if (currentLang == null) {  
+        currentLang = Language.ENGLISH;  
+        I18n.setLanguage(currentLang);  
     }  
+      
+    String langOption = getLanguageOptionFromEnum(currentLang);  
+    languageSetting.setOption(langOption);  
+    previousLanguageOption = langOption;  
+}
   
   private String getLanguageOptionFromEnum(Language language) {  
         switch (language) {  
@@ -84,20 +89,25 @@ public class ModMenuSettings extends Mod {
         }  
     }  
   
-    public final EventBus.EventListener<ClientTickEvent> onClientTick = event -> {  
+ public final EventBus.EventListener<ClientTickEvent> onClientTick = event -> {  
+          
+        // Initialize language setting once when I18n is ready  
+        if (!languageInitialized && I18n.getCurrentLanguage() != null) {  
+            initializeLanguageSetting();  
+            languageInitialized = true;  
+        }  
   
         if (keybindSetting.isPressed()) {  
-  
             if (modMenu == null) {  
                 modMenu = new GuiModMenu().build();  
             }  
-  
             client.setScreen(modMenu);  
         }  
   
         // Language Handler  
         handleLanguageChange();  
     };  
+}
   
     private void handleLanguageChange() {  
         String currentLanguageOption = languageSetting.getOption();  
