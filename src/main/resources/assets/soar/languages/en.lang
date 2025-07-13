@@ -162,6 +162,12 @@ mod.speedometer.description=Display player speed
 
 mod.autogg.name=Auto GG
 mod.autogg.description=Automatically send with gg when the game is finished
+setting.delay=delay
+setting.delay.description=Message sending delay
+setting.message=Message
+setting.message.description=Custom Send Message
+setting.hypixel=hypixel
+setting.hypixel.description=hypixel mode
 
 mod.customhand.name=Custom Hand
 mod.customhand.description=Change the position scale etc

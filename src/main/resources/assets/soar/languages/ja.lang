@@ -159,6 +159,12 @@ mod.speedometer.description=プレイヤーの速度を表示
 
 mod.autogg.name=自動GG
 mod.autogg.description=ゲーム終了時に自動で"gg"を送信
+setting.delay=遅延  
+setting.delay.description=メッセージ送信の遅延  
+setting.message=メッセージ  
+setting.message.description=カスタム送信メッセージ  
+setting.hypixel=Hypixel  
+setting.hypixel.description=Hypixelモード  
 
 mod.customhand.name=カスタムハンド
 mod.customhand.description=手の位置、スケールなどを変更
