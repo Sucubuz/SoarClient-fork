@@ -26,7 +26,7 @@ public class ModMenuSettings extends Mod {
   
     private static ModMenuSettings instance;  
     private String previousLanguageOption = "English";  
-    private boolean languageInitialized = false;
+    private boolean languageInitialized = false;  
   
     private KeybindSetting keybindSetting = new KeybindSetting("setting.keybind", "setting.keybind.description",  
             Icon.KEYBOARD, this, InputUtil.fromKeyCode(GLFW.GLFW_KEY_RIGHT_SHIFT, 0));  
@@ -39,7 +39,7 @@ public class ModMenuSettings extends Mod {
     private NumberSetting blurIntensitySetting = new NumberSetting("setting.blurintensity",  
             "setting.blurintensity.description", Icon.BLUR_LINEAR, this, 5, 1, 20, 1);  
     private ComboSetting languageSetting = new ComboSetting("setting.language", "setting.language.description",  
-            Icon.LANGUAGE, this, Arrays.asList("English", "中文","日本語"), "English");  
+            Icon.LANGUAGE, this, Arrays.asList("English", "中文", "日本語"), "English");  
   
     private Screen modMenu;  
   
@@ -50,24 +50,24 @@ public class ModMenuSettings extends Mod {
         this.setHidden(true);  
         this.setEnabled(true);  
           
-        //NO init language  
+        // Don't initialize language here - wait for I18n to be ready  
     }  
   
-private void initializeLanguageSetting() {  
-    Language currentLang = I18n.getCurrentLanguage();  
-      
-    // Ensure we have a valid language  
-    if (currentLang == null) {  
-        currentLang = Language.ENGLISH;  
-        I18n.setLanguage(currentLang);  
+    private void initializeLanguageSetting() {  
+        Language currentLang = I18n.getCurrentLanguage();  
+          
+        // Ensure we have a valid language  
+        if (currentLang == null) {  
+            currentLang = Language.ENGLISH;  
+            I18n.setLanguage(currentLang);  
+        }  
+          
+        String langOption = getLanguageOptionFromEnum(currentLang);  
+        languageSetting.setOption(langOption);  
+        previousLanguageOption = langOption;  
     }  
-      
-    String langOption = getLanguageOptionFromEnum(currentLang);  
-    languageSetting.setOption(langOption);  
-    previousLanguageOption = langOption;  
-}
   
-  private String getLanguageOptionFromEnum(Language language) {  
+    private String getLanguageOptionFromEnum(Language language) {  
         switch (language) {  
             case CHINESE:  
                 return "中文";  
@@ -89,7 +89,7 @@ private void initializeLanguageSetting() {
         }  
     }  
   
- public final EventBus.EventListener<ClientTickEvent> onClientTick = event -> {  
+    public final EventBus.EventListener<ClientTickEvent> onClientTick = event -> {  
           
         // Initialize language setting once when I18n is ready  
         if (!languageInitialized && I18n.getCurrentLanguage() != null) {  
@@ -107,10 +107,14 @@ private void initializeLanguageSetting() {
         // Language Handler  
         handleLanguageChange();  
     };  
-}
   
     private void handleLanguageChange() {  
         String currentLanguageOption = languageSetting.getOption();  
+          
+        // Skip if option is null or empty  
+        if (currentLanguageOption == null || currentLanguageOption.isEmpty()) {  
+            return;  
+        }  
           
         if (!currentLanguageOption.equals(previousLanguageOption)) {  
             Language targetLanguage = getLanguageEnumFromOption(currentLanguageOption);  
