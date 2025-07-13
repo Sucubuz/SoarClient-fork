@@ -2,7 +2,7 @@
 # Version 8.0
 #
 text.all=全部
-text.hud=界面
+text.hud=HUD
 text.render=渲染
 text.player=玩家
 text.misc=杂项

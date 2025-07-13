@@ -38,7 +38,7 @@ public class ModMenuSettings extends Mod {
     private NumberSetting blurIntensitySetting = new NumberSetting("setting.blurintensity",  
             "setting.blurintensity.description", Icon.BLUR_LINEAR, this, 5, 1, 20, 1);  
     private ComboSetting languageSetting = new ComboSetting("setting.language", "setting.language.description",  
-            Icon.LANGUAGE, this, Arrays.asList("English", "中文"), "English");  
+            Icon.LANGUAGE, this, Arrays.asList("English", "中文","日本語"), "English");  
   
     private Screen modMenu;  
   
