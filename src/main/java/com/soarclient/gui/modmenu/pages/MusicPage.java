@@ -63,9 +63,12 @@ public class MusicPage extends Page {
         MusicManager musicManager = Soar.getInstance().getMusicManager();
         ColorPalette palette = Soar.getInstance().getColorManager().getPalette();
 
+        float initialOffsetY = 96;
+
         int index = 0;
         float offsetX = 28;
-        float offsetY = 96;
+        float offsetY = initialOffsetY;
+
 
         controlBarAnimation.onTick(MouseUtils.isInside(mouseX, mouseY, controlBar.getX(), controlBar.getY(),
                 controlBar.getWidth(), controlBar.getHeight()) ? 1 : 0, 12);
@@ -90,8 +93,11 @@ public class MusicPage extends Page {
             float itemX = x + offsetX;
             float itemY = y + offsetY;
 
+            float topBorderY = this.y + this.height + initialOffsetY / 2;
+            float bottomBorderY = this.y - initialOffsetY / 2;
+
             // skip render if the item overflow the widget
-            if (this.y + this.height + offsetY < itemY || itemY < this.y - offsetY) {
+            if (topBorderY < itemY || itemY < bottomBorderY) {
                 continue;
             }
 
