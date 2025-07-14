@@ -9,14 +9,14 @@ text.misc=その他
 text.home=ホーム
 text.mods=MOD
 text.music=音楽
-text.profile=プロフィール
+text.profile=構成
 text.settings=設定
 text.search=検索
 text.selectfile=ファイルを選択
 text.add=追加
 text.name=名前
 text.serveraddress=サーバーアドレス
-text.createprofile=プロフィールを作成
+text.createprofile=構成を作成
 text.icon=アイコン
 
 language.english=English  

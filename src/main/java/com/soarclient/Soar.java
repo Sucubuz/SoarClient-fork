@@ -35,29 +35,28 @@ public class Soar {
 	private UserManager userManager;
 	private HypixelManager hypixelManager;
 
-	public void start() {
-
-		JCefBrowser.download();
-		Fonts.loadAll();
-		FileLocation.init();
-        I18n.setLanguage(Language.ENGLISH);
-
-		launchTime = System.currentTimeMillis();
-
-		modManager = new ModManager();
-		modManager.init();
-		colorManager = new ColorManager();
-		musicManager = new MusicManager();
-		configManager = new ConfigManager();
-		profileManager = new ProfileManager();
-		webSocketManager = new WebSocketManager();
-		userManager = new UserManager();
-		hypixelManager = new HypixelManager();
-
-		EventBus.getInstance().register(new SoarHandler());
-		EventBus.getInstance().register(new PacketHandler());
-		EventBus.getInstance().register(new Delta());
-	}
+	public void start() {  
+    JCefBrowser.download();  
+    Fonts.loadAll();  
+    FileLocation.init();  
+    // I18n.setLanguage(Language.ENGLISH); // it is dead  
+  
+    launchTime = System.currentTimeMillis();  
+  
+    modManager = new ModManager();  
+    modManager.init();  
+    colorManager = new ColorManager();  
+    musicManager = new MusicManager();  
+    configManager = new ConfigManager();   
+    profileManager = new ProfileManager();  
+    webSocketManager = new WebSocketManager();  
+    userManager = new UserManager();  
+    hypixelManager = new HypixelManager();  
+  
+    EventBus.getInstance().register(new SoarHandler());  
+    EventBus.getInstance().register(new PacketHandler());  
+    EventBus.getInstance().register(new Delta());  
+}
 
 	public static Soar getInstance() {
 		return instance;

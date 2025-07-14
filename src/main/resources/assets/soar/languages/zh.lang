@@ -9,14 +9,14 @@ text.misc=杂项
 text.home=主页
 text.mods=模组
 text.music=音乐
-text.profile=个人资料
+text.profile=配置
 text.settings=设置
 text.search=搜索
 text.selectfile=选择文件
 text.add=添加
 text.name=名称
 text.serveraddress=服务器地址
-text.createprofile=创建个人资料
+text.createprofile=创建配置
 text.icon=图标
 
 language.english=English  
