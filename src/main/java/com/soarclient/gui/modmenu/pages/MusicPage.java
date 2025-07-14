@@ -91,7 +91,7 @@ public class MusicPage extends Page {
             float itemY = y + offsetY;
 
             // skip render if the item overflow the widget
-            if (this.y + this.height + offsetY < itemY || itemY < this.y - offsetY) {
+            if (this.y + this.height + (float) 96 / 2 < itemY || itemY < this.y - (float) 96 / 2) {
                 continue;
             }
 
