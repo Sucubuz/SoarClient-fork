@@ -4,10 +4,12 @@ import java.util.Arrays;
   
 import org.lwjgl.glfw.GLFW;  
   
+import com.soarclient.Soar;  
 import com.soarclient.event.EventBus;  
 import com.soarclient.event.client.ClientTickEvent;  
 import com.soarclient.gui.modmenu.GuiModMenu;  
 import com.soarclient.libraries.material3.hct.Hct;  
+import com.soarclient.management.config.ConfigType;  
 import com.soarclient.management.mod.Mod;  
 import com.soarclient.management.mod.ModCategory;  
 import com.soarclient.management.mod.settings.impl.BooleanSetting;  
@@ -53,16 +55,20 @@ public class ModMenuSettings extends Mod {
     }  
   
     private void initializeLanguageSetting() {  
-        Language currentLang = I18n.getCurrentLanguage();  
+        String configLanguage = languageSetting.getOption();  
+        Language targetLanguage = null;  
           
-        if (currentLang == null) {  
-            currentLang = Language.ENGLISH;  
-            I18n.setLanguage(currentLang);  
+        if (configLanguage != null && !configLanguage.isEmpty() && languageSetting.has(configLanguage)) {  
+            targetLanguage = getLanguageEnumFromOption(configLanguage);  
+        } else {   
+            targetLanguage = Language.ENGLISH;  
+            configLanguage = "language.english";  
+            languageSetting.setOption(configLanguage);  
         }  
           
-        String langOption = getLanguageOptionFromEnum(currentLang);  
-        languageSetting.setOption(langOption);  
-        previousLanguageOption = langOption;  
+        // set I18n language
+        I18n.setLanguage(targetLanguage);  
+        previousLanguageOption = configLanguage;  
     }  
   
     private String getLanguageOptionFromEnum(Language language) {  
@@ -86,9 +92,9 @@ public class ModMenuSettings extends Mod {
         }  
     }  
   
-    public final EventBus.EventListener<ClientTickEvent> onClientTick = event -> {  
+public final EventBus.EventListener<ClientTickEvent> onClientTick = event -> {  
           
-        if (!languageInitialized && I18n.getCurrentLanguage() != null) {  
+        if (!languageInitialized) {  
             initializeLanguageSetting();  
             languageInitialized = true;  
         }  
@@ -122,6 +128,9 @@ public class ModMenuSettings extends Mod {
             }  
               
             previousLanguageOption = currentLanguageOption;  
+              
+            // save config
+            Soar.getInstance().getConfigManager().save(ConfigType.MOD);  
         }  
     }  
   
