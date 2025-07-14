@@ -25,20 +25,21 @@ import com.soarclient.utils.Multithreading;
 import com.soarclient.utils.mouse.MouseUtils;
 
 public class MusicControlBar extends Component {
-
-	private List<Component> components = new ArrayList<>();
-	private List<ControlButton> buttons = new ArrayList<>();
-	private SimpleAnimation animation = new SimpleAnimation();
+	private final List<Component> components = new ArrayList<>();
+	private final List<ControlButton> buttons = new ArrayList<>();
+	private final SimpleAnimation animation = new SimpleAnimation();
 	private boolean addMusic;
+	private boolean isDraggingVolume;
+	private float lastVolume = 1.0f;
 
-	private IconButton downloadButton;
-	private TextField urlField;
+	private final TextField urlField;
+	private final IconButton downloadButton;
 
 	public MusicControlBar(float x, float y, float width) {
 		super(x, y);
 		this.width = width;
 		this.height = 64;
-		
+
 		MusicManager musicManager = Soar.getInstance().getMusicManager();
 
 		float offsetY = 26;
@@ -47,15 +48,9 @@ public class MusicControlBar extends Component {
 			musicManager.setShuffle(false);
 			musicManager.setRepeat(!musicManager.isRepeat());
 		}));
-		buttons.add(new ControlButton(Icon.SKIP_PREVIOUS, 0, y + offsetY, () -> {
-			musicManager.back();
-		}));
-		buttons.add(new ControlButton(musicManager.isPlaying() ? Icon.PAUSE : Icon.PLAY_ARROW, 0, y + offsetY, () -> {
-			musicManager.switchPlayBack();
-		}));
-		buttons.add(new ControlButton(Icon.SKIP_NEXT, 0, y + offsetY, () -> {
-			musicManager.next();
-		}));
+		buttons.add(new ControlButton(Icon.SKIP_PREVIOUS, 0, y + offsetY, musicManager::back));
+		buttons.add(new ControlButton(musicManager.isPlaying() ? Icon.PAUSE : Icon.PLAY_ARROW, 0, y + offsetY, musicManager::switchPlayBack));
+		buttons.add(new ControlButton(Icon.SKIP_NEXT, 0, y + offsetY, musicManager::next));
 		buttons.add(new ControlButton(Icon.SHUFFLE, 0, y + offsetY, () -> {
 			musicManager.setRepeat(false);
 			musicManager.setShuffle(!musicManager.isShuffle());
@@ -72,36 +67,34 @@ public class MusicControlBar extends Component {
 
 		urlField = new TextField(x + 8, y + 12, 320, "");
 		downloadButton = new IconButton(Icon.DOWNLOAD, x + 320 + 16, y + 12, IconButton.Size.SMALL, IconButton.Style.PRIMARY);
-		
+
 		centerX = centerX - ((downloadButton.getWidth() + urlField.getWidth() + 8) / 2);
 		urlField.setX(centerX);
 		downloadButton.setX(centerX + urlField.getWidth() + 8);
-		
-		downloadButton.setHandler(new ButtonHandler() {
 
+		downloadButton.setHandler(new ButtonHandler() {
 			@Override
 			public void onAction() {
-				
+				if (urlField.getText().isEmpty()) {
+					return;
+				}
+
 				Ytdlp ytdlp = new Ytdlp();
-				
 				ytdlp.setFFmpegPath(SystemSettings.getInstance().getFFmpegPath());
 				ytdlp.setYtdlpPath(SystemSettings.getInstance().getYtdlpPath());
-				
-				if(!urlField.getText().isEmpty()) {
-					Multithreading.runAsync(() -> {
-						
+
+				Multithreading.runAsync(() -> {
+					try {
 						boolean result = ytdlp.download(urlField.getText());
-						
-						if(result) {
-							try {
-								Soar.getInstance().getMusicManager().load();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+						if (result) {
+							Soar.getInstance().getMusicManager().load();
 						}
-					});
-					addMusic = false;
-				}
+					} catch (Exception e) {
+						System.err.println("Failed to download music: " + e.getMessage());
+					} finally {
+						addMusic = false;
+					}
+				});
 			}
 		});
 
@@ -149,6 +142,25 @@ public class MusicControlBar extends Component {
 
 		drawSeekBar(x + (width / 2) - (seekWidth / 2), y + height - seekHeight - 12, seekWidth, seekHeight);
 
+		// 绘制音量控制条
+		float volumeControlWidth = 80;  // 减小音量条宽度
+		float volumeX = x + width - volumeControlWidth - 30;  // 调整位置，更靠右
+		float volumeY = y + height - seekHeight - 12;
+
+		// 绘制音量图标
+		String volumeIcon = musicManager.getVolume() <= 0 ? Icon.VOLUME_OFF :
+						   musicManager.getVolume() < 0.5f ? Icon.VOLUME_DOWN : Icon.VOLUME_UP;
+		Skia.drawText(volumeIcon, volumeX - 20, volumeY + 5, palette.getOnSurface(), Fonts.getIconFill(14));
+
+		// 绘制音量控制条背景
+		Skia.drawRoundedRect(volumeX, volumeY, volumeControlWidth, seekHeight, 3.5F, palette.getSurfaceContainerHigh());
+
+		// 绘制音量控制条进度
+		float volumeProgress = musicManager.getVolume() * volumeControlWidth;
+		if (volumeProgress > 0) {  // 只在有音量时绘制进度条
+			Skia.drawRoundedRect(volumeX, volumeY, volumeProgress, seekHeight, 3.5F, palette.getPrimary());
+		}
+
 		buttons.get(2).icon = musicManager.isPlaying() ? Icon.PAUSE : Icon.PLAY_ARROW;
 		buttons.get(0).color = musicManager.isRepeat() ? palette.getPrimary() : palette.getOnSurface();
 		buttons.get(4).color = musicManager.isShuffle() ? palette.getPrimary() : palette.getOnSurface();
@@ -161,7 +173,7 @@ public class MusicControlBar extends Component {
 
 		Skia.save();
 		Skia.translate(0, (1 - animation.getValue()) * height);
-		
+
 		for (Component c : components) {
 			c.draw(mouseX, mouseY);
 		}
@@ -200,14 +212,56 @@ public class MusicControlBar extends Component {
 				c.mousePressed(mouseX, mouseY, button);
 			}
 		} else {
+			// 检查音量控制区域的点击
+			float volumeControlWidth = 80;  // 修改为与渲染时相同的宽度
+			float volumeX = x + width - volumeControlWidth - 30;  // 修改为与渲染时相同的位置
+			float volumeY = y + height - 6 - 12;
+
+			// 检查音量图标点击（静音/取消静音）
+			if (MouseUtils.isInside(mouseX, mouseY, volumeX - 30, volumeY - 6, 24, 24)
+					&& button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+				MusicManager musicManager = Soar.getInstance().getMusicManager();
+				if (musicManager.getVolume() > 0) {
+					lastVolume = musicManager.getVolume();
+					musicManager.setVolume(0);
+				} else {
+					musicManager.setVolume(lastVolume);
+				}
+				return;
+			}
+
+			// 检查音量控制条点击
+			if (MouseUtils.isInside(mouseX, mouseY, volumeX - 2, volumeY - 4, volumeControlWidth + 4, 12)
+					&& button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+				isDraggingVolume = true;
+				updateVolumeFromMouse(mouseX, volumeX, volumeControlWidth);
+				return;
+			}
+
 			for (ControlButton b : buttons) {
 				b.mousePressed(mouseX, mouseY, button);
 			}
 		}
 	}
 
+	private void updateVolumeFromMouse(double mouseX, float volumeX, float volumeControlWidth) {
+		// 将鼠标位置限制在音量条范围内
+		mouseX = Math.max(volumeX, Math.min(volumeX + volumeControlWidth, mouseX));
+		float volume = (float) ((mouseX - volumeX) / volumeControlWidth);
+		Soar.getInstance().getMusicManager().setVolume(volume);
+	}
+
+	public void mouseDragged(int button, double mouseX, double mouseY, double deltaX, double deltaY) {
+		if (!addMusic && isDraggingVolume) {
+			float volumeControlWidth = 80;
+			float volumeX = x + width - volumeControlWidth - 30;
+			updateVolumeFromMouse(mouseX, volumeX, volumeControlWidth);
+		}
+	}
+
 	@Override
 	public void mouseReleased(double mouseX, double mouseY, int button) {
+		isDraggingVolume = false;
 
 		if (addMusic) {
 			for (Component c : components) {
@@ -236,7 +290,7 @@ public class MusicControlBar extends Component {
 			}
 		}
 	}
-	
+
 	@Override
 	public void charTyped(char chr, int modifiers) {
 		if (addMusic) {
@@ -246,11 +300,10 @@ public class MusicControlBar extends Component {
 		}
 	}
 
-	private class ControlButton extends Component {
-
+	private static class ControlButton extends Component {
 		private String icon;
+		private final Runnable task;
 		private Color color;
-		private Runnable task;
 
 		public ControlButton(String icon, float x, float y, Runnable task) {
 			super(x, y);
@@ -263,15 +316,19 @@ public class MusicControlBar extends Component {
 
 		@Override
 		public void draw(double mouseX, double mouseY) {
-			Skia.drawFullCenteredText(icon, ControlButton.this.x, ControlButton.this.y, color, Fonts.getIconFill(28));
+			Skia.drawFullCenteredText(icon, x, y, color, Fonts.getIconFill(28));
 		}
 
 		@Override
 		public void mouseReleased(double mouseX, double mouseY, int button) {
-			if (MouseUtils.isInside(mouseX, mouseY, ControlButton.this.x - 13, ControlButton.this.y - 13, 28, 28)
+			if (MouseUtils.isInside(mouseX, mouseY, x - 13, y - 13, 28, 28)
 					&& button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				task.run();
 			}
+		}
+
+		public void setColor(Color color) {
+			this.color = color;
 		}
 	}
 }
