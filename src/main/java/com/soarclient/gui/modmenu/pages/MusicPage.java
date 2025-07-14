@@ -2,6 +2,8 @@ package com.soarclient.gui.modmenu.pages;
 
 import com.soarclient.Soar;
 import com.soarclient.animation.SimpleAnimation;
+import com.soarclient.event.EventBus;
+import com.soarclient.event.server.impl.MusicLibraryUpdatedEvent;
 import com.soarclient.gui.api.SoarGui;
 import com.soarclient.gui.api.page.Page;
 import com.soarclient.gui.api.page.impl.RightLeftTransition;
@@ -48,6 +50,22 @@ public class MusicPage extends Page {
         }
 
         controlBar = new MusicControlBar(x + 22, y + height - 60 - 18, width - 44);
+
+        for (Item i : items) {
+            i.xAnimation.setFirstTick(true);
+            i.yAnimation.setFirstTick(true);
+        }
+    }
+
+    public EventBus.EventListener<MusicLibraryUpdatedEvent> onMusicLibraryUpdated = event -> {
+        refreshMusicList();
+    };
+
+    public void refreshMusicList() {
+        items.clear();
+        for (Music m : Soar.getInstance().getMusicManager().getMusics()) {
+            items.add(new Item(m));
+        }
 
         for (Item i : items) {
             i.xAnimation.setFirstTick(true);

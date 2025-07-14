@@ -5,6 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="24c7cd68-0cb9-4e0e-a12c-3b87246aa599" name="更改" comment="fix music gui blur is turn red(but now not blur)">
+      <change beforePath="$PROJECT_DIR$/.idea/MarsCodeWorkspaceAppSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MarsCodeWorkspaceAppSettings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/soarclient/gui/modmenu/component/MusicControlBar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/soarclient/gui/modmenu/component/MusicControlBar.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/soarclient/gui/modmenu/pages/MusicPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/soarclient/gui/modmenu/pages/MusicPage.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

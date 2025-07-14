@@ -5,6 +5,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.soarclient.event.EventBus;
+import com.soarclient.event.server.impl.MusicLibraryUpdatedEvent;
 import org.lwjgl.glfw.GLFW;
 
 import com.soarclient.Soar;
@@ -28,10 +30,12 @@ public class MusicControlBar extends Component {
 	private final List<Component> components = new ArrayList<>();
 	private final List<ControlButton> buttons = new ArrayList<>();
 	private final SimpleAnimation animation = new SimpleAnimation();
+	private IconButton refreshButton;
+	private SimpleAnimation refreshAnimation = new SimpleAnimation();
+
 	private boolean addMusic;
 	private boolean isDraggingVolume;
 	private float lastVolume = 1.0f;
-
 	private final TextField urlField;
 	private final IconButton downloadButton;
 
@@ -39,7 +43,7 @@ public class MusicControlBar extends Component {
 		super(x, y);
 		this.width = width;
 		this.height = 64;
-
+		EventBus.getInstance().register(this);
 		MusicManager musicManager = Soar.getInstance().getMusicManager();
 
 		float offsetY = 26;
@@ -49,11 +53,24 @@ public class MusicControlBar extends Component {
 			musicManager.setRepeat(!musicManager.isRepeat());
 		}));
 		buttons.add(new ControlButton(Icon.SKIP_PREVIOUS, 0, y + offsetY, musicManager::back));
+
 		buttons.add(new ControlButton(musicManager.isPlaying() ? Icon.PAUSE : Icon.PLAY_ARROW, 0, y + offsetY, musicManager::switchPlayBack));
 		buttons.add(new ControlButton(Icon.SKIP_NEXT, 0, y + offsetY, musicManager::next));
 		buttons.add(new ControlButton(Icon.SHUFFLE, 0, y + offsetY, () -> {
-			musicManager.setRepeat(false);
 			musicManager.setShuffle(!musicManager.isShuffle());
+			musicManager.setRepeat(false);
+		}));
+		buttons.add(new ControlButton(Icon.REFRESH, 0, y + offsetY, () -> {
+			refreshAnimation.setFirstTick(true);
+			Multithreading.runAsync(() -> {
+				try {
+					Soar.getInstance().getMusicManager().load();
+					// Send music library update event
+					EventBus.getInstance().post(new MusicLibraryUpdatedEvent());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
 		}));
 
 		float totalWidth = (buttons.size() * 22) + ((buttons.size() - 1) * 2);
@@ -67,12 +84,23 @@ public class MusicControlBar extends Component {
 
 		urlField = new TextField(x + 8, y + 12, 320, "");
 		downloadButton = new IconButton(Icon.DOWNLOAD, x + 320 + 16, y + 12, IconButton.Size.SMALL, IconButton.Style.PRIMARY);
-
-		centerX = centerX - ((downloadButton.getWidth() + urlField.getWidth() + 8) / 2);
-		urlField.setX(centerX);
-		downloadButton.setX(centerX + urlField.getWidth() + 8);
-
-		downloadButton.setHandler(new ButtonHandler() {
+		refreshButton = new IconButton(Icon.REFRESH, centerX - 48, y + 12, IconButton.Size.SMALL, IconButton.Style.PRIMARY);
+		centerX = centerX - ((refreshButton.getWidth() + downloadButton.getWidth() + urlField.getWidth() + 16) / 2);
+		urlField.setX(centerX + refreshButton.getWidth() + 8);
+		downloadButton.setX(centerX + refreshButton.getWidth() + urlField.getWidth() + 16);
+		refreshButton.setHandler(new ButtonHandler() {
+			public void onAction() {
+				refreshAnimation.setFirstTick(true);
+				Multithreading.runAsync(() -> {
+					try {
+						Soar.getInstance().getMusicManager().load();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				});
+			}
+		});
+			downloadButton.setHandler(new ButtonHandler() {
 			@Override
 			public void onAction() {
 				if (urlField.getText().isEmpty()) {
@@ -185,6 +213,8 @@ public class MusicControlBar extends Component {
 		float iconWidth = Skia.getTextBounds(icon, Fonts.getRegular(24)).getWidth();
 
 		Skia.drawText(icon, x + width - iconWidth - 8, y + 8, palette.getOnSurface(), Fonts.getIcon(24));
+
+
 	}
 
 	private void drawSeekBar(float x, float y, float width, float height) {
@@ -241,6 +271,8 @@ public class MusicControlBar extends Component {
 			for (ControlButton b : buttons) {
 				b.mousePressed(mouseX, mouseY, button);
 			}
+			refreshButton.mousePressed(mouseX, mouseY, button);
+			refreshButton.mouseReleased(mouseX, mouseY, button);
 		}
 	}
 
