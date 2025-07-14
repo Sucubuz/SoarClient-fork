@@ -67,7 +67,10 @@ dependencies {
 	jij 'io.github.humbleui:skija-windows-x64:0.116.4'
 	jij 'io.github.humbleui:skija-linux-x64:0.116.4'
 	jij 'io.github.humbleui:skija-macos-x64:0.116.4'
-	jij 'io.github.humbleui:skija-macos-arm64:0.116.4'
+	jij 'com.mpatric:mp3agic:0.9.1'
+	jij 'javazoom:jlayer:1.0.1'
+	jij 'com.googlecode.soundlibs:mp3spi:1.9.5.4'
+	jij 'com.googlecode.soundlibs:jlayer:1.0.1.4'
 	jij 'com.kohlschutter.junixsocket:junixsocket-common:2.10.1'
 	jij 'org.java-websocket:Java-WebSocket:1.6.0'
 	jij "net.lenni0451:MCPing:1.4.2"

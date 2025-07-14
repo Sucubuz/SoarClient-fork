@@ -27,15 +27,19 @@ public class Ytdlp {
 	}
 
 	public boolean download(String url) {
+		return download(url, "flac");
+	}
+
+	public boolean download(String url, String format) {
 
 		List<String> command = new ArrayList<>();
 
 		command.add(ytdlp);
-        command.add("-f");
-        command.add("bestaudio");
+		command.add("-f");
+		command.add("bestaudio");
 		command.add("--extract-audio");
 		command.add("--audio-format");
-		command.add("flac");
+		command.add(format); // 支持 "flac" 或 "mp3"
 		command.add("--embed-thumbnail");
 		command.add("--convert-thumbnails");
 		command.add("png");
@@ -53,13 +57,13 @@ public class Ytdlp {
 		try {
 			ProcessBuilder processBuilder = new ProcessBuilder(command);
 			Process process = processBuilder.start();
-            
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-            	SoarLogger.info("YTDLP", line);
-            }
-            
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				SoarLogger.info("YTDLP", line);
+			}
+
 			int exitCode = process.waitFor();
 
 			if (exitCode == 0) {

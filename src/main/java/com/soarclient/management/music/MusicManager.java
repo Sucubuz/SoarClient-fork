@@ -9,6 +9,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.imageio.ImageIO;
 
+import com.mpatric.mp3agic.ID3v1;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.Mp3File;
 import com.soarclient.libraries.flac.FLACDecoder;
 import com.soarclient.libraries.flac.metadata.Metadata;
 import com.soarclient.libraries.flac.metadata.Picture;
@@ -74,7 +77,7 @@ public class MusicManager {
 	public void load() throws Exception {
 
 		musics.clear();
-		
+
 		File musicDir = FileLocation.MUSIC_DIR;
 
 		if (musicDir.listFiles() == null) {
@@ -83,51 +86,93 @@ public class MusicManager {
 
 		for (File f : musicDir.listFiles()) {
 
-			String name = f.getName();
+			String name = f.getName().toLowerCase();
 
 			if (name.endsWith(".flac")) {
-
-				FLACDecoder decoder = new FLACDecoder(new FileInputStream(f));
-				Metadata[] metadata = decoder.readMetadata();
-				String title = null;
-				String artist = null;
-				byte[] imageData = null;
-
-				for (Metadata meta : metadata) {
-					if (meta instanceof VorbisComment) {
-						VorbisComment comment = (VorbisComment) meta;
-						if (comment.getCommentByName("TITLE").length > 0) {
-							title = comment.getCommentByName("TITLE")[0];
-						}
-						if (comment.getCommentByName("ARTIST").length > 0) {
-							artist = comment.getCommentByName("ARTIST")[0];
-						}
-					} else if (meta instanceof Picture) {
-						Picture picture = (Picture) meta;
-						imageData = picture.getImage();
-					}
-				}
-
-				String fileHash = FileUtils.getMd5Checksum(f);
-				File album = new File(FileLocation.CACHE_DIR, fileHash);
-				Color color = Color.BLACK;
-
-				if (imageData != null && !album.exists()) {
-
-					FileOutputStream fos = new FileOutputStream(album);
-
-					fos.write(imageData);
-					fos.close();
-				}
-
-				if (imageData != null && album.exists()) {
-					color = ImageUtils.calculateAverageColor(ImageIO.read(album));
-				}
-
-				musics.add(new Music(f, title == null ? f.getName().replace(".flac", "") : title,
-						artist == null ? "" : artist, album.exists() ? album : null, color));
+				loadFlacFile(f);
+			} else if (name.endsWith(".mp3")) {
+				loadMp3File(f);
 			}
 		}
+	}
+
+	private void loadFlacFile(File f) throws Exception {
+		FLACDecoder decoder = new FLACDecoder(new FileInputStream(f));
+		Metadata[] metadata = decoder.readMetadata();
+		String title = null;
+		String artist = null;
+		byte[] imageData = null;
+
+		for (Metadata meta : metadata) {
+			if (meta instanceof VorbisComment) {
+				VorbisComment comment = (VorbisComment) meta;
+				if (comment.getCommentByName("TITLE").length > 0) {
+					title = comment.getCommentByName("TITLE")[0];
+				}
+				if (comment.getCommentByName("ARTIST").length > 0) {
+					artist = comment.getCommentByName("ARTIST")[0];
+				}
+			} else if (meta instanceof Picture) {
+				Picture picture = (Picture) meta;
+				imageData = picture.getImage();
+			}
+		}
+
+		String fileHash = FileUtils.getMd5Checksum(f);
+		File album = new File(FileLocation.CACHE_DIR, fileHash);
+		Color color = Color.BLACK;
+
+		if (imageData != null && !album.exists()) {
+			FileOutputStream fos = new FileOutputStream(album);
+			fos.write(imageData);
+			fos.close();
+		}
+
+		if (imageData != null && album.exists()) {
+			color = ImageUtils.calculateAverageColor(ImageIO.read(album));
+		}
+
+		musics.add(new Music(f, title == null ? f.getName().replace(".flac", "") : title,
+				artist == null ? "" : artist, album.exists() ? album : null, color));
+	}
+
+	private void loadMp3File(File f) throws Exception {
+		String title = null;
+		String artist = null;
+		byte[] imageData = null;
+
+		try {
+			Mp3File mp3file = new Mp3File(f);
+			if (mp3file.hasId3v2Tag()) {
+				ID3v2 id3v2Tag = mp3file.getId3v2Tag();
+				title = id3v2Tag.getTitle();
+				artist = id3v2Tag.getArtist();
+				imageData = id3v2Tag.getAlbumImage();
+			} else if (mp3file.hasId3v1Tag()) {
+				ID3v1 id3v1Tag = mp3file.getId3v1Tag();
+				title = id3v1Tag.getTitle();
+				artist = id3v1Tag.getArtist();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String fileHash = FileUtils.getMd5Checksum(f);
+		File album = new File(FileLocation.CACHE_DIR, fileHash);
+		Color color = Color.BLACK;
+
+		if (imageData != null && !album.exists()) {
+			FileOutputStream fos = new FileOutputStream(album);
+			fos.write(imageData);
+			fos.close();
+		}
+
+		if (imageData != null && album.exists()) {
+			color = ImageUtils.calculateAverageColor(ImageIO.read(album));
+		}
+
+		musics.add(new Music(f, title == null ? f.getName().replace(".mp3", "") : title,
+				artist == null ? "" : artist, album.exists() ? album : null, color));
 	}
 
 	public void play() {
