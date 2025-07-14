@@ -103,8 +103,8 @@ public class MusicPage extends Page {
 			itemY = yAnimation.getValue();
 
 			if (m.getAlbum() != null) {
-				drawRoundedImage(m.getAlbum(), itemX, itemY, 174, 174, 26,
-						(Math.abs(focusAnimation.getValue()) + 0.001F) * 6);
+				// no blur
+				Skia.drawRoundedImage(m.getAlbum(), itemX, itemY, 174, 174, 26);
 			} else {
 				Skia.drawRoundedRect(itemX, itemY, 174, 174, 26, palette.getSurfaceContainerHigh());
 			}
