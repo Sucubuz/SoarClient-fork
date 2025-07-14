@@ -1,5 +1,6 @@
 package com.soarclient.management.music;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.BufferedInputStream;
 
@@ -61,6 +62,7 @@ public class MusicPlayer implements Runnable {
 	private float lastCurrentTime;
 	private long totalFrames;
 	private long currentFrame;
+	private float mp3Duration = 0;
 
 	public MusicPlayer(Runnable runnable) {
 		this.runnable = runnable;
@@ -124,6 +126,9 @@ public class MusicPlayer implements Runnable {
 		try {
 			FileInputStream fis = new FileInputStream(currentMusic.getAudio());
 			BufferedInputStream bis = new BufferedInputStream(fis);
+
+			calculateMp3Duration(currentMusic.getAudio());
+
 			bitstream = new Bitstream(bis);
 			mp3Decoder = new Decoder();
 
@@ -141,9 +146,6 @@ public class MusicPlayer implements Runnable {
 			setVolume(volume);
 			sourceDataLine.start();
 
-			currentFrame = 0;
-			totalFrames = (long) (mp3Header.ms_per_frame() * sampleRate / 1000.0);
-
 			do {
 				while (!playing) {
 					Thread.sleep(10);
@@ -154,7 +156,6 @@ public class MusicPlayer implements Runnable {
 					byte[] buffer = toByteArray(output.getBuffer(), output.getBufferLength());
 					updateSpectrum(buffer);
 					sourceDataLine.write(buffer, 0, buffer.length);
-					currentFrame++;
 				}
 
 				bitstream.closeFrame();
@@ -173,6 +174,24 @@ public class MusicPlayer implements Runnable {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void calculateMp3Duration(File mp3File) {
+		try {
+			com.mpatric.mp3agic.Mp3File mp3 = new com.mpatric.mp3agic.Mp3File(mp3File);
+			mp3Duration = (float) mp3.getLengthInSeconds();
+		} catch (Exception e) {
+			try {
+				AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(mp3File);
+				AudioFormat format = audioInputStream.getFormat();
+				long frames = audioInputStream.getFrameLength();
+				mp3Duration = (float) (frames / format.getFrameRate());
+				audioInputStream.close();
+			} catch (Exception ex) {
+				mp3Duration = 0;
+				ex.printStackTrace();
+			}
 		}
 	}
 	private byte[] toByteArray(short[] samples, int length) {
@@ -260,9 +279,7 @@ public class MusicPlayer implements Runnable {
 				return (float) totalSamples / sampleRate;
 			}
 		} else if (fileName.endsWith(".mp3")) {
-			if (mp3Header != null && totalFrames > 0) {
-				return (float) totalFrames / mp3Header.frequency();
-			}
+			return mp3Duration;
 		}
 
 		return 0;

@@ -185,7 +185,12 @@ public class MusicControlBar extends Component {
 		float end = musicManager.getEndTime();
 
 		Skia.drawRoundedRect(x, y, width, height, 3.5F, palette.getSurfaceContainerHigh());
-		Skia.drawRoundedRect(x, y, (current / end) * width, height, 3.5F, palette.getPrimary());
+
+		if (end > 0 && current >= 0 && current <= end && !Float.isInfinite(end) && !Float.isNaN(end)) {
+			float progress = (current / end) * width;
+			progress = Math.min(progress, width);
+			Skia.drawRoundedRect(x, y, progress, height, 3.5F, palette.getPrimary());
+		}
 	}
 
 	@Override
