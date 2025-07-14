@@ -39,7 +39,7 @@ public class Ytdlp {
 		command.add("bestaudio");
 		command.add("--extract-audio");
 		command.add("--audio-format");
-		command.add(format); // 支持 "flac" 或 "mp3"
+		command.add(format);
 		command.add("--embed-thumbnail");
 		command.add("--convert-thumbnails");
 		command.add("png");

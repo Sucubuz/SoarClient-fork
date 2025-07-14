@@ -1,12 +1,20 @@
 package com.soarclient.management.music;
 
 import java.io.FileInputStream;
+import java.io.BufferedInputStream;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.SourceDataLine;
+
+import javazoom.jl.decoder.Bitstream;
+import javazoom.jl.decoder.Decoder;
+import javazoom.jl.decoder.Header;
+import javazoom.jl.decoder.SampleBuffer;
+import javazoom.jl.decoder.JavaLayerException;
 
 import com.soarclient.animation.SimpleAnimation;
 import com.soarclient.libraries.flac.FLACDecoder;
@@ -33,8 +41,14 @@ public class MusicPlayer implements Runnable {
 
 	private Runnable runnable;
 
+	// FLAC相关
 	private FLACDecoder decoder;
 	private StreamInfo streamInfo;
+
+	// MP3相关
+	private Bitstream bitstream;
+	private Decoder mp3Decoder;
+	private Header mp3Header;
 
 	private AudioFormat audioFormat;
 	private DataLine.Info info;
@@ -45,6 +59,8 @@ public class MusicPlayer implements Runnable {
 	private float volume;
 
 	private float lastCurrentTime;
+	private long totalFrames;
+	private long currentFrame;
 
 	public MusicPlayer(Runnable runnable) {
 		this.runnable = runnable;
@@ -55,43 +71,118 @@ public class MusicPlayer implements Runnable {
 	@Override
 	public void run() {
 		if (currentMusic != null && playing) {
-			try {
-				decoder = new FLACDecoder(new FileInputStream(currentMusic.getAudio()));
-				streamInfo = decoder.readStreamInfo();
-				audioFormat = new AudioFormat(streamInfo.getSampleRate(),
-						streamInfo.getBitsPerSample() == 24 ? 16 : streamInfo.getBitsPerSample(),
-						streamInfo.getChannels(), (streamInfo.getBitsPerSample() <= 8) ? false : true, false);
-				info = new DataLine.Info(SourceDataLine.class, audioFormat);
+			String fileName = currentMusic.getAudio().getName().toLowerCase();
 
-				sourceDataLine = (SourceDataLine) AudioSystem.getLine(info);
-				sourceDataLine.open(audioFormat);
-				setVolume(volume);
-				sourceDataLine.start();
-
-				Frame frame;
-				ByteData byteData = new ByteData(FFT_SIZE * 4);
-
-				while ((frame = decoder.readNextFrame()) != null) {
-
-					while (!playing) {
-						Thread.sleep(10);
-					}
-
-					ByteData pcm = decoder.decodeFrame(frame, byteData);
-					updateSpectrum(pcm.getData());
-					sourceDataLine.write(pcm.getData(), 0, pcm.getLen());
-				}
-
-				if ((int) getCurrentTime() >= (int) getEndTime()) {
-					runnable.run();
-				}
-
-				sourceDataLine.drain();
-				sourceDataLine.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (fileName.endsWith(".flac")) {
+				playFlacFile();
+			} else if (fileName.endsWith(".mp3")) {
+				playMp3File();
 			}
 		}
+	}
+
+	private void playFlacFile() {
+		try {
+			decoder = new FLACDecoder(new FileInputStream(currentMusic.getAudio()));
+			streamInfo = decoder.readStreamInfo();
+			audioFormat = new AudioFormat(streamInfo.getSampleRate(),
+					streamInfo.getBitsPerSample() == 24 ? 16 : streamInfo.getBitsPerSample(),
+					streamInfo.getChannels(), (streamInfo.getBitsPerSample() <= 8) ? false : true, false);
+			info = new DataLine.Info(SourceDataLine.class, audioFormat);
+
+			sourceDataLine = (SourceDataLine) AudioSystem.getLine(info);
+			sourceDataLine.open(audioFormat);
+			setVolume(volume);
+			sourceDataLine.start();
+
+			Frame frame;
+			ByteData byteData = new ByteData(FFT_SIZE * 4);
+
+			while ((frame = decoder.readNextFrame()) != null) {
+
+				while (!playing) {
+					Thread.sleep(10);
+				}
+
+				ByteData pcm = decoder.decodeFrame(frame, byteData);
+				updateSpectrum(pcm.getData());
+				sourceDataLine.write(pcm.getData(), 0, pcm.getLen());
+			}
+
+			if ((int) getCurrentTime() >= (int) getEndTime()) {
+				runnable.run();
+			}
+
+			sourceDataLine.drain();
+			sourceDataLine.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void playMp3File() {
+		try {
+			FileInputStream fis = new FileInputStream(currentMusic.getAudio());
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			bitstream = new Bitstream(bis);
+			mp3Decoder = new Decoder();
+
+			mp3Header = bitstream.readFrame();
+			if (mp3Header == null) return;
+
+			int sampleRate = mp3Header.frequency();
+			int channels = mp3Header.mode() == Header.SINGLE_CHANNEL ? 1 : 2;
+
+			audioFormat = new AudioFormat(sampleRate, 16, channels, true, false);
+			info = new DataLine.Info(SourceDataLine.class, audioFormat);
+
+			sourceDataLine = (SourceDataLine) AudioSystem.getLine(info);
+			sourceDataLine.open(audioFormat);
+			setVolume(volume);
+			sourceDataLine.start();
+
+			currentFrame = 0;
+			// 修复：使用正确的方法计算总帧数
+			totalFrames = (long) (mp3Header.ms_per_frame() * sampleRate / 1000.0);
+
+			do {
+				while (!playing) {
+					Thread.sleep(10);
+				}
+
+				SampleBuffer output = (SampleBuffer) mp3Decoder.decodeFrame(mp3Header, bitstream);
+				if (output != null) {
+					byte[] buffer = toByteArray(output.getBuffer(), output.getBufferLength());
+					updateSpectrum(buffer);
+					sourceDataLine.write(buffer, 0, buffer.length);
+					currentFrame++;
+				}
+
+				bitstream.closeFrame();
+				mp3Header = bitstream.readFrame();
+
+			} while (mp3Header != null && playing);
+
+			if (mp3Header == null) {
+				runnable.run();
+			}
+
+			sourceDataLine.drain();
+			sourceDataLine.close();
+			bitstream.close();
+			fis.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	private byte[] toByteArray(short[] samples, int length) {
+		byte[] buffer = new byte[length * 2];
+		for (int i = 0; i < length; i++) {
+			buffer[i * 2] = (byte) (samples[i] & 0xFF);
+			buffer[i * 2 + 1] = (byte) ((samples[i] >> 8) & 0xFF);
+		}
+		return buffer;
 	}
 
 	private void updateSpectrum(byte[] audioData) {
@@ -156,16 +247,23 @@ public class MusicPlayer implements Runnable {
 	}
 
 	public float getEndTime() {
+		String fileName = currentMusic != null ? currentMusic.getAudio().getName().toLowerCase() : "";
 
-		if (streamInfo == null) {
-			return 0;
-		}
+		if (fileName.endsWith(".flac")) {
+			if (streamInfo == null) {
+				return 0;
+			}
 
-		long totalSamples = streamInfo.getTotalSamples();
-		int sampleRate = streamInfo.getSampleRate();
+			long totalSamples = streamInfo.getTotalSamples();
+			int sampleRate = streamInfo.getSampleRate();
 
-		if (totalSamples > 0 && sampleRate > 0) {
-			return (float) totalSamples / sampleRate;
+			if (totalSamples > 0 && sampleRate > 0) {
+				return (float) totalSamples / sampleRate;
+			}
+		} else if (fileName.endsWith(".mp3")) {
+			if (mp3Header != null && totalFrames > 0) {
+				return (float) totalFrames / mp3Header.frequency();
+			}
 		}
 
 		return 0;
@@ -179,9 +277,12 @@ public class MusicPlayer implements Runnable {
 		if (volume >= 0.0f && volume <= 1.0f) {
 			this.volume = volume;
 			if (sourceDataLine != null) {
-				FloatControl gainControl = (FloatControl) sourceDataLine.getControl(FloatControl.Type.MASTER_GAIN);
-				float gain = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
-				gainControl.setValue(gain);
+				try {
+					FloatControl gainControl = (FloatControl) sourceDataLine.getControl(FloatControl.Type.MASTER_GAIN);
+					float gain = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
+					gainControl.setValue(gain);
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
