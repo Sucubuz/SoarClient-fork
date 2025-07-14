@@ -3,7 +3,7 @@ package com.soarclient.gui.modmenu.pages;
 import com.soarclient.Soar;
 import com.soarclient.animation.SimpleAnimation;
 import com.soarclient.event.EventBus;
-import com.soarclient.event.server.impl.MusicLibraryUpdatedEvent;
+import com.soarclient.event.client.MusicLibraryUpdatedEvent;
 import com.soarclient.gui.api.SoarGui;
 import com.soarclient.gui.api.page.Page;
 import com.soarclient.gui.api.page.impl.RightLeftTransition;
@@ -24,6 +24,7 @@ import io.github.humbleui.types.RRect;
 import io.github.humbleui.types.Rect;
 import org.lwjgl.glfw.GLFW;
 
+import java.awt.*;
 import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
@@ -111,13 +112,8 @@ public class MusicPage extends Page {
             float itemX = x + offsetX;
             float itemY = y + offsetY;
 
-            float topBorderY = this.y + this.height + initialOffsetY / 2;
-            float bottomBorderY = this.y - initialOffsetY / 2;
-
-            // skip render if the item overflow the widget
-            if (topBorderY < itemY || itemY < bottomBorderY) {
-                continue;
-            }
+            float topBorderY = this.y - initialOffsetY - scrollHelper.getValue();
+            float bottomBorderY = this.y + this.height + initialOffsetY / 2 - scrollHelper.getValue();
 
             xAnimation.onTick(itemX, 14);
             yAnimation.onTick(itemY, 14);
@@ -126,28 +122,31 @@ public class MusicPage extends Page {
             itemX = xAnimation.getValue();
             itemY = yAnimation.getValue();
 
-            if (m.getAlbum() != null) {
-                drawRoundedImage(m.getAlbum(), itemX, itemY, 174, 174, 26,
-                        (Math.abs(focusAnimation.getValue()) + 0.001F) * 6);
-            } else {
-                Skia.drawRoundedRect(itemX, itemY, 174, 174, 26, palette.getSurfaceContainerHigh());
+            // skip render if the item overflow the widget
+            if (topBorderY < itemY && itemY < bottomBorderY) {
+                if (m.getAlbum() != null) {
+                    drawRoundedImage(m.getAlbum(), itemX, itemY, 174, 174, 26,
+                            (Math.abs(focusAnimation.getValue()) + 0.001F) * 6);
+                } else {
+                    Skia.drawRoundedRect(itemX, itemY, 174, 174, 26, palette.getSurfaceContainerHigh());
+                }
+
+                String limitedTitle = Skia.getLimitText(m.getTitle(), Fonts.getRegular(15), 174);
+                String limitedArtist = Skia.getLimitText(m.getArtist(), Fonts.getRegular(12), 174);
+
+                Skia.drawText(limitedTitle, itemX, itemY + 174 + 6, palette.getOnSurface(), Fonts.getRegular(15));
+                Skia.drawText(limitedArtist, itemX, itemY + 174 + 6 + 15, palette.getOnSurfaceVariant(),
+                        Fonts.getRegular(12));
+
+                String icon = musicManager.getCurrentMusic() != null && musicManager.getCurrentMusic().equals(m)
+                        && musicManager.isPlaying() ? Icon.PAUSE : Icon.PLAY_ARROW;
+
+                Skia.save();
+                Skia.translate(0, 15 - (focusAnimation.getValue() * 15));
+                Skia.drawFullCenteredText(icon, itemX + ((float) 174 / 2), itemY + ((float) 174 / 2),
+                        ColorUtils.applyAlpha(Color.WHITE, focusAnimation.getValue()), Fonts.getIconFill(64));
+                Skia.restore();
             }
-
-            String limitedTitle = Skia.getLimitText(m.getTitle(), Fonts.getRegular(15), 174);
-            String limitedArtist = Skia.getLimitText(m.getArtist(), Fonts.getRegular(12), 174);
-
-            Skia.drawText(limitedTitle, itemX, itemY + 174 + 6, palette.getOnSurface(), Fonts.getRegular(15));
-            Skia.drawText(limitedArtist, itemX, itemY + 174 + 6 + 15, palette.getOnSurfaceVariant(),
-                    Fonts.getRegular(12));
-
-            String icon = musicManager.getCurrentMusic() != null && musicManager.getCurrentMusic().equals(m)
-                    && musicManager.isPlaying() ? Icon.PAUSE : Icon.PLAY_ARROW;
-
-            Skia.save();
-            Skia.translate(0, 15 - (focusAnimation.getValue() * 15));
-            Skia.drawFullCenteredText(icon, itemX + (174 / 2), itemY + (174 / 2),
-                    ColorUtils.applyAlpha(Color.WHITE, focusAnimation.getValue()), Fonts.getIconFill(64));
-            Skia.restore();
 
             offsetX += 174 + 32;
             index++;
