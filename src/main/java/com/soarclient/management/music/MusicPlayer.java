@@ -41,11 +41,11 @@ public class MusicPlayer implements Runnable {
 
 	private Runnable runnable;
 
-	// FLAC相关
+	// FLAC
 	private FLACDecoder decoder;
 	private StreamInfo streamInfo;
 
-	// MP3相关
+	// MP3
 	private Bitstream bitstream;
 	private Decoder mp3Decoder;
 	private Header mp3Header;
@@ -142,7 +142,6 @@ public class MusicPlayer implements Runnable {
 			sourceDataLine.start();
 
 			currentFrame = 0;
-			// 修复：使用正确的方法计算总帧数
 			totalFrames = (long) (mp3Header.ms_per_frame() * sampleRate / 1000.0);
 
 			do {
