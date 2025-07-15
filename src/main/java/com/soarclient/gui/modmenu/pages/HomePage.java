@@ -11,9 +11,7 @@ import com.soarclient.skia.font.Icon;
 import io.github.humbleui.skija.ClipMode;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.SkinTextures;
-import net.minecraft.util.Identifier;
 
 public class HomePage extends Page {
     private static final float CARD_WIDTH = 220;
