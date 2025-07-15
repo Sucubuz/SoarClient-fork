@@ -24,7 +24,7 @@ import com.soarclient.utils.file.FileUtils;
 public class MusicManager {
 
 	private List<Music> musics = new CopyOnWriteArrayList<>();
-
+	private volatile boolean isLoading = false;
 	private Music currentMusic;
 	private MusicPlayer musicPlayer;
 	private boolean shuffle;
@@ -75,24 +75,37 @@ public class MusicManager {
 	}
 
 	public void load() throws Exception {
-
-		musics.clear();
-
-		File musicDir = FileLocation.MUSIC_DIR;
-
-		if (musicDir.listFiles() == null) {
-			return;
+		if (isLoading) {
+			return; // if is loading return
 		}
 
-		for (File f : musicDir.listFiles()) {
-
-			String name = f.getName().toLowerCase();
-
-			if (name.endsWith(".flac")) {
-				loadFlacFile(f);
-			} else if (name.endsWith(".mp3")) {
-				loadMp3File(f);
+		synchronized (this) {
+			if (isLoading) {
+				return;
 			}
+			isLoading = true;
+		}
+
+		try {
+			musics.clear();
+
+			File musicDir = FileLocation.MUSIC_DIR;
+
+			if (musicDir.listFiles() == null) {
+				return;
+			}
+
+			for (File f : musicDir.listFiles()) {
+				String name = f.getName().toLowerCase();
+
+				if (name.endsWith(".flac")) {
+					loadFlacFile(f);
+				} else if (name.endsWith(".mp3")) {
+					loadMp3File(f);
+				}
+			}
+		} finally {
+			isLoading = false;
 		}
 	}
 
