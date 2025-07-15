@@ -29,12 +29,15 @@ import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MusicPage extends Page {
 
     private final SimpleAnimation controlBarAnimation = new SimpleAnimation();
     private MusicControlBar controlBar;
     private final List<Item> items = new ArrayList<>();
+    private Map<String, Integer> coverTextureCache = new ConcurrentHashMap<>();
 
     public MusicPage(SoarGui parent) {
         super(parent, "text.music", Icon.MUSIC_NOTE, new RightLeftTransition(true));
@@ -73,6 +76,7 @@ public class MusicPage extends Page {
             i.yAnimation.setFirstTick(true);
         }
     }
+
 
     @Override
     public void draw(double mouseX, double mouseY) {
