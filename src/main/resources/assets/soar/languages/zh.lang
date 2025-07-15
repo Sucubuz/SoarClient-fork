@@ -100,6 +100,11 @@ mod.serveripdisplay.description=显示你加入的服务器IP
 mod.fakefps.name=伪装FPS
 mod.fakefps.description=伪装显示的FPS数值
 
+mod.cpsdisplay.name=CPS显示
+mod.cpsdisplay.description=显示每秒点击次数
+setting.rightclick=右键点击
+setting.rightclick.description=显示右键CPS
+
 mod.namedisplay.name=名称显示
 mod.namedisplay.description=显示你的名称
 

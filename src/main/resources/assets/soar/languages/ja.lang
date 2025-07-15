@@ -94,6 +94,11 @@ mod.nojumpdelay.description=ジャンプディレイを削除
 mod.taplook.name=タップルック
 mod.taplook.description=ワンタッチで視点方向を切り替え
 
+mod.cpsdisplay.name=CPS表示
+mod.cpsdisplay.description=毎秒クリック数を表示
+setting.rightclick=右クリック
+setting.rightclick.description=右クリックCPSを表示
+
 mod.serveripdisplay.name=サーバーIP表示
 mod.serveripdisplay.description=接続中のサーバーIPを表示
 

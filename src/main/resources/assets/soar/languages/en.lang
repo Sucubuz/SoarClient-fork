@@ -148,6 +148,11 @@ mod.oldanimations.description=Return animation to 1.7
 mod.hypixel.name=Hypixel
 mod.hypixel.description=Useful features for Hypixel
 
+mod.cpsdisplay.name=CPS Display
+mod.cpsdisplay.description=Display clicks per second
+setting.rightclick=Right Click
+setting.rightclick.description=Show right click CPS
+
 mod.particles.name=Particles
 mod.particles.description=Customize the particles
 

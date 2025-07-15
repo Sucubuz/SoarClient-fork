@@ -77,6 +77,7 @@ public class ModManager {
 		mods.add(new WebBrowserMod());
 		mods.add(new WeatherDisplayMod());
 		mods.add(new YawDisplayMod());
+        mods.add(new CPSDisplayMod());
 
 		// Player
 		mods.add(new AutoGGMod());
