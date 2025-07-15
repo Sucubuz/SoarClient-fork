@@ -8,6 +8,7 @@ import com.soarclient.management.color.api.ColorPalette;
 import com.soarclient.skia.Skia;
 import com.soarclient.skia.font.Fonts;
 import com.soarclient.skia.font.Icon;
+import io.github.humbleui.skija.ClipMode;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.DefaultSkinHelper;
@@ -40,28 +41,45 @@ public class HomePage extends Page {
 
         if (player != null) {
             Skia.drawRoundedRect(cardX, cardY, CARD_WIDTH, CARD_HEIGHT, 10, palette.getSurface());
-
             float avatarSize = 60;
             float avatarX = cardX + 10;
-            float avatarY = cardY + (CARD_HEIGHT - avatarSize) / 2;  // 垂直居中
+            float avatarY = cardY + (CARD_HEIGHT - avatarSize) / 2;
 
             Skia.drawRoundedRect(avatarX, avatarY, avatarSize, avatarSize, 8, palette.getSurfaceContainerHighest());
 
+            //get skin
             SkinTextures skinTextures = player.getSkinTextures();
             if (skinTextures != null && skinTextures.texture() != null) {
                 MinecraftClient mc = MinecraftClient.getInstance();
                 int textureId = mc.getTextureManager().getTexture(skinTextures.texture()).getGlId();
-                Skia.drawRoundedImage(textureId, avatarX, avatarY, avatarSize, avatarSize, 8);
+
+                Skia.save();
+
+                //mcskin head
+                float skinWidth = 64;
+                float skinHeight = 64;
+                float headX = 8;
+                float headY = 8;
+                float headSize = 8;
+
+                //缩放
+                float scale = avatarSize / headSize;
+                float drawX = avatarX - (headX * scale);
+                float drawY = avatarY - (headY * scale);
+                float totalWidth = skinWidth * scale;
+                float totalHeight = skinHeight * scale;
+
+                Skia.getCanvas().clipRRect(io.github.humbleui.types.RRect.makeXYWH(avatarX, avatarY, avatarSize, avatarSize, 8), ClipMode.INTERSECT, true);
+                Skia.drawImage(textureId, drawX, drawY, totalWidth, totalHeight);
+
+                Skia.restore();
             }
 
-            // 绘制玩家信息
             float textX = avatarX + avatarSize + 15;
             float textBaselineY = cardY + CARD_HEIGHT/2;
-
             String playerName = player.getName().getString();
             Skia.drawText(playerName, textX, textBaselineY - 8, palette.getOnSurface(), Fonts.getRegular(16));
-
-            Skia.drawText("在线", textX, textBaselineY + 16, palette.getOnSurfaceVariant(), Fonts.getRegular(14));
+            Skia.drawText("User", textX, textBaselineY + 16, palette.getOnSurfaceVariant(), Fonts.getRegular(14));
         }
     }
 }
