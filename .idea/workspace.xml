@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24c7cd68-0cb9-4e0e-a12c-3b87246aa599" name="更改" comment="add refresh music button">
+    <list default="true" id="24c7cd68-0cb9-4e0e-a12c-3b87246aa599" name="更改" comment="add refresh music event">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/soarclient/event/server/impl/MusicLibraryUpdatedEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/soarclient/gui/modmenu/component/MusicControlBar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/soarclient/gui/modmenu/component/MusicControlBar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/soarclient/gui/modmenu/pages/MusicPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/soarclient/gui/modmenu/pages/MusicPage.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -188,7 +191,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752517134902</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="add refresh music event">
+      <option name="closed" value="true" />
+      <created>1752544709994</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1752544709994</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -206,6 +217,7 @@
     <MESSAGE value="fix mp3 seekbar error" />
     <MESSAGE value="fix music gui blur is turn red(but now not blur)" />
     <MESSAGE value="add refresh music button" />
-    <option name="LAST_COMMIT_MESSAGE" value="add refresh music button" />
+    <MESSAGE value="add refresh music event" />
+    <option name="LAST_COMMIT_MESSAGE" value="add refresh music event" />
   </component>
 </project>

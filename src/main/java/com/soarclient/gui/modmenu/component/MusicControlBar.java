@@ -4,6 +4,9 @@ import com.soarclient.Soar;
 import com.soarclient.animation.SimpleAnimation;
 import com.soarclient.event.EventBus;
 import com.soarclient.event.client.MusicLibraryUpdatedEvent;
+import com.soarclient.gui.api.SoarGui;
+import com.soarclient.gui.modmenu.GuiModMenu;
+import com.soarclient.gui.modmenu.pages.MusicPage;
 import com.soarclient.management.color.api.ColorPalette;
 import com.soarclient.management.mod.impl.settings.SystemSettings;
 import com.soarclient.management.music.Music;
@@ -31,10 +34,11 @@ public class MusicControlBar extends Component {
     private final SimpleAnimation animation = new SimpleAnimation();
     private final IconButton refreshButton;
     private final SimpleAnimation refreshAnimation = new SimpleAnimation();
-
+    private SoarGui parentGui;
     private boolean addMusic;
     private boolean isDraggingVolume;
     private float lastVolume = 1.0f;
+    private boolean isRefreshing = false;
     private final TextField urlField;
     private final IconButton downloadButton;
 
@@ -42,6 +46,7 @@ public class MusicControlBar extends Component {
         super(x, y);
         this.width = width;
         this.height = 64;
+        this.parentGui = parentGui;
         EventBus.getInstance().register(this);
         MusicManager musicManager = Soar.getInstance().getMusicManager();
 
@@ -58,18 +63,6 @@ public class MusicControlBar extends Component {
         buttons.add(new ControlButton(Icon.SHUFFLE, 0, y + offsetY, () -> {
             musicManager.setShuffle(!musicManager.isShuffle());
             musicManager.setRepeat(false);
-        }));
-        buttons.add(new ControlButton(Icon.REFRESH, 0, y + offsetY, () -> {
-            refreshAnimation.setFirstTick(true);
-            Multithreading.runAsync(() -> {
-                try {
-                    Soar.getInstance().getMusicManager().load();
-                    // Send music library update event
-                    EventBus.getInstance().post(new MusicLibraryUpdatedEvent());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
         }));
 
         float totalWidth = (buttons.size() * 22) + ((buttons.size() - 1) * 2);
@@ -212,7 +205,12 @@ public class MusicControlBar extends Component {
         float iconWidth = Skia.getTextBounds(icon, Fonts.getRegular(24)).getWidth();
 
         Skia.drawText(icon, x + width - iconWidth - 8, y + 8, palette.getOnSurface(), Fonts.getIcon(24));
+// Reload a music list
+        String refreshIcon = Icon.REFRESH;
+        float refreshIconWidth = Skia.getTextBounds(refreshIcon, Fonts.getRegular(24)).getWidth();
+        float refreshX = x + width - iconWidth - refreshIconWidth - 40;
 
+        Skia.drawText(refreshIcon, refreshX, y + 8, palette.getOnSurface(), Fonts.getIcon(24));
 
     }
 
@@ -311,6 +309,21 @@ public class MusicControlBar extends Component {
                 && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             addMusic = !addMusic;
         }
+        String refreshIcon = Icon.REFRESH;
+        float refreshIconWidth = Skia.getTextBounds(refreshIcon, Fonts.getRegular(24)).getWidth();
+        float refreshX = x + width - iconWidth - refreshIconWidth - 40;
+
+        if (MouseUtils.isInside(mouseX, mouseY, refreshX - 16, y, 32, 32)
+                && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            Multithreading.runAsync(() -> {
+                try {
+                    Soar.getInstance().getMusicManager().load();
+                    new GuiModMenu().build();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
     @Override
@@ -362,4 +375,5 @@ public class MusicControlBar extends Component {
             this.color = color;
         }
     }
+
 }
