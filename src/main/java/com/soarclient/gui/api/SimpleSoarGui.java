@@ -47,7 +47,7 @@ public class SimpleSoarGui {
 			}
 
 			@Override
-			public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+			public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
 
 				SkiaContext.draw((skiaContext) -> {
 

@@ -170,7 +170,10 @@ public class MusicControlBar extends Component {
         // 绘制音量图标
         String volumeIcon = musicManager.getVolume() <= 0 ? Icon.VOLUME_OFF :
                 musicManager.getVolume() < 0.5f ? Icon.VOLUME_DOWN : Icon.VOLUME_UP;
-        Skia.drawText(volumeIcon, volumeX - 20, volumeY + 5, palette.getOnSurface(), Fonts.getIconFill(14));
+        float iconSize = 16;
+        // 让图标完全与音量条水平对齐
+        float iconY = volumeY + -2; // 直接使用音量条的中心位置
+        Skia.drawText(volumeIcon, volumeX - 24, iconY, palette.getOnSurface(), Fonts.getIconFill((int)iconSize));
 
         // 绘制音量控制条背景
         Skia.drawRoundedRect(volumeX, volumeY, volumeControlWidth, seekHeight, 3.5F, palette.getSurfaceContainerHigh());
