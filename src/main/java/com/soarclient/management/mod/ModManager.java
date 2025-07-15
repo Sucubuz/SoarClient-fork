@@ -11,10 +11,7 @@ import com.soarclient.management.mod.api.hud.design.impl.ClearDesign;
 import com.soarclient.management.mod.api.hud.design.impl.MaterialYouDesign;
 import com.soarclient.management.mod.api.hud.design.impl.SimpleDesign;
 import com.soarclient.management.mod.impl.hud.*;
-import com.soarclient.management.mod.impl.misc.DiscordRPCMod;
-import com.soarclient.management.mod.impl.misc.HypixelMod;
-import com.soarclient.management.mod.impl.misc.TimeChangerMod;
-import com.soarclient.management.mod.impl.misc.WeatherChangerMod;
+import com.soarclient.management.mod.impl.misc.*;
 import com.soarclient.management.mod.impl.player.AutoGGMod;
 import com.soarclient.management.mod.impl.player.ForceMainHandMod;
 import com.soarclient.management.mod.impl.player.FreelookMod;
@@ -106,6 +103,7 @@ public class ModManager {
 		mods.add(new HypixelMod());
 		mods.add(new TimeChangerMod());
 		mods.add(new WeatherChangerMod());
+        mods.add(new FakeFPSMod());
 		
 		// Settings
 		mods.add(new HUDModSettings());

@@ -97,6 +97,9 @@ mod.taplook.description=一键切换视角方向
 mod.serveripdisplay.name=服务器IP显示
 mod.serveripdisplay.description=显示你加入的服务器IP
 
+mod.fakefps.name=伪装FPS
+mod.fakefps.description=伪装显示的FPS数值
+
 mod.namedisplay.name=名称显示
 mod.namedisplay.description=显示你的名称
 

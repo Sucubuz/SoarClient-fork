@@ -3,6 +3,7 @@ package com.soarclient.management.mod.impl.hud;
 import com.soarclient.event.EventBus;
 import com.soarclient.event.client.RenderSkiaEvent;
 import com.soarclient.management.mod.api.hud.SimpleHUDMod;
+import com.soarclient.management.mod.impl.misc.FakeFPSMod;
 import com.soarclient.skia.font.Icon;
 
 public class FPSDisplayMod extends SimpleHUDMod {
@@ -15,10 +16,15 @@ public class FPSDisplayMod extends SimpleHUDMod {
 		this.draw();
 	};
 
-	@Override
-	public String getText() {
-		return client.getCurrentFps() + " FPS";
-	}
+    @Override
+    public String getText() {
+        int fps = client.getCurrentFps();
+        FakeFPSMod fakeFPSMod = FakeFPSMod.getInstance();
+        if (fakeFPSMod != null) {
+            fps = fakeFPSMod.getFakeFPS(fps);
+        }
+        return fps + " FPS";
+    }
 
 	@Override
 	public String getIcon() {

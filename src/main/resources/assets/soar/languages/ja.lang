@@ -97,6 +97,9 @@ mod.taplook.description=ワンタッチで視点方向を切り替え
 mod.serveripdisplay.name=サーバーIP表示
 mod.serveripdisplay.description=接続中のサーバーIPを表示
 
+mod.fakefps.name=偽装FPS
+mod.fakefps.description=表示されるFPS値を偽装
+
 mod.namedisplay.name=名前表示
 mod.namedisplay.description=自分の名前を表示
 

@@ -136,6 +136,9 @@ mod.clock.description=Display current time
 mod.memoryusage.name=Memory Usage
 mod.memoryusage.description=Display Minecraft memory usage
 
+mod.fakefps.name=Fake FPS
+mod.fakefps.description=Fake the displayed FPS value
+
 mod.bedwarsstatsoverlay.name=Bedwars Stats Overlay
 mod.bedwarsstatsoverlay.description=Display Bedwars Stats
 
