@@ -8,14 +8,15 @@ import com.soarclient.management.color.api.ColorPalette;
 import com.soarclient.skia.Skia;
 import com.soarclient.skia.font.Fonts;
 import com.soarclient.skia.font.Icon;
+import com.soarclient.utils.language.I18n;
 import io.github.humbleui.skija.ClipMode;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.SkinTextures;
 
 public class HomePage extends Page {
-    private static final float CARD_WIDTH = 220;
-    private static final float CARD_HEIGHT = 80;
+    private static final float CARD_WIDTH = 300;
+    private static final float CARD_HEIGHT = 120;
     private float cardX;
     private float cardY;
 
@@ -27,7 +28,7 @@ public class HomePage extends Page {
     public void init() {
         super.init();
         cardX = x + 20;
-        cardY = y + 20;
+        cardY = y + 90;
     }
 
     @Override
@@ -37,15 +38,20 @@ public class HomePage extends Page {
         ColorPalette palette = Soar.getInstance().getColorManager().getPalette();
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
 
+        Skia.drawText(I18n.get("text.home"), x + 32, y + 30,
+                palette.getOnSurface(), Fonts.getRegular(40));
+
         if (player != null) {
             Skia.drawRoundedRect(cardX, cardY, CARD_WIDTH, CARD_HEIGHT, 10, palette.getSurface());
-            float avatarSize = 60;
-            float avatarX = cardX + 10;
+
+            // head
+            float avatarSize = 90;
+            float avatarX = cardX + 20;
             float avatarY = cardY + (CARD_HEIGHT - avatarSize) / 2;
 
             Skia.drawRoundedRect(avatarX, avatarY, avatarSize, avatarSize, 8, palette.getSurfaceContainerHighest());
 
-            //get skin
+            // get and render skin
             SkinTextures skinTextures = player.getSkinTextures();
             if (skinTextures != null && skinTextures.texture() != null) {
                 MinecraftClient mc = MinecraftClient.getInstance();
@@ -53,14 +59,12 @@ public class HomePage extends Page {
 
                 Skia.save();
 
-                //mcskin head
                 float skinWidth = 64;
                 float skinHeight = 64;
                 float headX = 8;
                 float headY = 8;
                 float headSize = 8;
 
-                //缩放
                 float scale = avatarSize / headSize;
                 float drawX = avatarX - (headX * scale);
                 float drawY = avatarY - (headY * scale);
@@ -73,11 +77,11 @@ public class HomePage extends Page {
                 Skia.restore();
             }
 
+            // player name
             float textX = avatarX + avatarSize + 15;
-            float textBaselineY = cardY + CARD_HEIGHT/2;
+            float textBaselineY = cardY + CARD_HEIGHT/2 - 33;
             String playerName = player.getName().getString();
-            Skia.drawText(playerName, textX, textBaselineY - 8, palette.getOnSurface(), Fonts.getRegular(16));
-            Skia.drawText("User", textX, textBaselineY + 16, palette.getOnSurfaceVariant(), Fonts.getRegular(14));
+            Skia.drawText(playerName, textX, textBaselineY, palette.getOnSurface(), Fonts.getRegular(30));
         }
     }
 }
