@@ -32,7 +32,6 @@ public class CPSDisplayMod extends SimpleHUDMod {
         rightPresses.removeIf(t -> System.currentTimeMillis() - t > 1000);
     };
 
-    // 鼠标点击处理需要通过其他方式实现，因为8.0使用不同的事件系统
     public void onMouseClick(int button, boolean pressed) {
         if (pressed) {
             if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
