@@ -42,7 +42,6 @@ public class WatermarkMod extends HUDMod {
         } catch (Exception e) {
             System.err.println("Error in WatermarkMod.draw(): " + e.getMessage());
             e.printStackTrace();
-            // 设置基本碰撞箱作为回退
             position.setSize(100, 20);
         } finally {
             try {
@@ -55,9 +54,8 @@ public class WatermarkMod extends HUDMod {
 
     private void drawTextMode() {
         String text = textSetting.getValue();
-        float fontSize = 24; // 大字体
+        float fontSize = 24;
 
-        // 获取文本边界用于碰撞箱计算，使用粗体字体
         Rect textBounds = Skia.getTextBounds(text, Fonts.getMedium(fontSize));
         FontMetrics metrics = Fonts.getMedium(fontSize).getMetrics();
 
@@ -65,14 +63,14 @@ public class WatermarkMod extends HUDMod {
         float height = fontSize;
         float textCenterY = (metrics.getAscent() - metrics.getDescent()) / 2 - metrics.getAscent();
 
-        // 获取动态渐变颜色
         Color gradientColor = getAnimatedColor();
 
-        // 直接绘制文字，使用粗体字体
+        Skia.drawText(text, getX() + 1, getY() + (height / 2) - textCenterY + 1,
+            new Color(0, 0, 0, 100), Fonts.getMedium(fontSize));
+
         Skia.drawText(text, getX(), getY() + (height / 2) - textCenterY,
             gradientColor, Fonts.getMedium(fontSize));
 
-        // 设置碰撞箱大小，跟随文本动态变化
         position.setSize(width, height);
     }
 
@@ -85,19 +83,17 @@ public class WatermarkMod extends HUDMod {
             }
 
             long currentTime = System.nanoTime();
-            double speed = 0.0000000002; // 缓慢的渐变速度
+            double speed = 0.000000002; // speed
             double cycle = (currentTime * speed) % (2 * Math.PI);
 
             Color color1 = palette.getPrimary();
             Color color2 = palette.getSecondary();
             Color color3 = palette.getTertiary();
 
-            // 确保颜色不为空
             if (color1 == null) color1 = Color.WHITE;
             if (color2 == null) color2 = Color.LIGHT_GRAY;
             if (color3 == null) color3 = Color.GRAY;
 
-            // 三色循环渐变
             double normalizedCycle = (cycle / (2 * Math.PI)) * 3;
 
             Color resultColor;
@@ -131,6 +127,6 @@ public class WatermarkMod extends HUDMod {
 
     @Override
     public float getRadius() {
-        return 0; // 无背景，无圆角
+        return 0;
     }
 }
