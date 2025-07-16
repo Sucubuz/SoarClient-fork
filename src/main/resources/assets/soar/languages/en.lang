@@ -207,7 +207,14 @@ mod.forcemainhand.description=Force the main hand to be set
 setting.darkmode=Dark Mode
 setting.darkmode.description=Enable dark mode
 setting.keybind=Keybind
-setting.keybind.description=Set keybind
+setting.keybind.description=Set the keybind
+
+setting.font=Font
+setting.font.description=Change client font
+font.default=Default (Inter)
+font.microsoft_yahei=Microsoft YaHei
+font.noto_sans=Noto Sans CJK
+custom.font=%s
 setting.icon=Icon
 setting.icon.description=Set the icon to display
 setting.color=Color

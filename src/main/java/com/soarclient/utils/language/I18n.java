@@ -50,10 +50,11 @@ public final class I18n {
 	/**  
 	 * Gets the translated string for the given key  
 	 * @param key The translation key  
-	 * @return The translated string, or "null" if not found  
+	 * @return The translated string, or return the key if not found
 	 */  
-	public static String get(String key) {  
-		return translateMap.getOrDefault(key, "null");  
+	public static String get(String key) {
+        // FIXME: create a TranslatedString and use it instead
+		return translateMap.getOrDefault(key, key);
 	}  
   
 	/**  
