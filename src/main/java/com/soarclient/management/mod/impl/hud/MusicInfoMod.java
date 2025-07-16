@@ -9,6 +9,7 @@ import com.soarclient.event.EventBus;
 import com.soarclient.event.client.RenderSkiaEvent;
 import com.soarclient.management.mod.api.hud.SimpleHUDMod;
 import com.soarclient.management.mod.settings.impl.ComboSetting;
+import com.soarclient.management.mod.settings.impl.BooleanSetting;
 import com.soarclient.management.music.Music;
 import com.soarclient.management.music.MusicManager;
 import com.soarclient.skia.Skia;
@@ -31,6 +32,9 @@ public class MusicInfoMod extends SimpleHUDMod {
 	private final ComboSetting typeSetting = new ComboSetting("setting.type", "setting.type.description",
 			Icon.FORMAT_LIST_BULLETED, this, Arrays.asList("setting.simple", "setting.normal", "setting.cover"),
 			"setting.simple");
+
+    private final BooleanSetting backgroundSetting = new BooleanSetting("setting.background",
+            "setting.background.description", Icon.IMAGE, this, true);
 
 	public MusicInfoMod() {
 		super("mod.musicinfo.name", "mod.musicinfo.description", Icon.MUSIC_NOTE);
@@ -68,7 +72,9 @@ public class MusicInfoMod extends SimpleHUDMod {
 		Color textColor = cover ? Color.WHITE : this.getDesign().getTextColor();
 		float coverSize = 256;
 
-		this.drawBackground(getX(), getY(), width, height);
+		if (backgroundSetting.isEnabled()) {
+            this.drawBackground(getX(), getY(), width, height);
+        }
 
 		if (m != null && cover && m.getAlbum() != null) {
 			Skia.save();
