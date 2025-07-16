@@ -4,7 +4,7 @@ import com.soarclient.Soar;
 import com.soarclient.management.mod.Mod;
 import com.soarclient.management.mod.settings.Setting;
 
-public class StringSetting extends Setting {
+public abstract class StringSetting extends Setting {
 
 	private String defaultValue, value;
 
@@ -33,4 +33,6 @@ public class StringSetting extends Setting {
 	public String getDefaultValue() {
 		return defaultValue;
 	}
+
+    public abstract boolean isVisible();
 }

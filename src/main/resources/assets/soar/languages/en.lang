@@ -153,6 +153,19 @@ mod.cpsdisplay.description=Display clicks per second
 setting.rightclick=Right Click
 setting.rightclick.description=Show right click CPS
 
+mod.clientspoof.name=Client Spoof
+mod.clientspoof.description=Spoof your client brand to servers
+
+setting.clientspoof.mode=Mode
+setting.clientspoof.mode.description=Select client spoofing mode
+setting.clientspoof.vanilla=Vanilla
+setting.clientspoof.lunar1204=Lunar 1.20.4
+setting.clientspoof.lunar1201=Lunar 1.20.1
+setting.clientspoof.custom=Custom
+setting.clientspoof.null=None
+setting.clientspoof.custom=Custom Client
+setting.clientspoof.custom.description=Custom client name for spoofing
+
 mod.watermark.name=Watermark
 mod.watermark.description=Display custom watermark text
 setting.text=Text

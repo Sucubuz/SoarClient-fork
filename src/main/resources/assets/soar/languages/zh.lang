@@ -103,6 +103,19 @@ mod.fakefps.description=伪装显示的FPS数值
 mod.cpsdisplay.name=CPS显示
 mod.cpsdisplay.description=显示每秒点击次数
 
+mod.clientspoof.name=客户端伪装
+mod.clientspoof.description=向服务器伪装你的客户端品牌
+
+setting.clientspoof.mode=模式
+setting.clientspoof.mode.description=选择客户端伪装模式
+setting.clientspoof.vanilla=原版
+setting.clientspoof.lunar1204=Lunar 1.20.4
+setting.clientspoof.lunar1201=Lunar 1.20.1
+setting.clientspoof.custom=自定义
+setting.clientspoof.null=无
+setting.clientspoof.custom=自定义客户端
+setting.clientspoof.custom.description=用于伪装的自定义客户端名称
+
 mod.watermark.name=水印
 mod.watermark.description=显示自定义水印文本
 setting.text=文本

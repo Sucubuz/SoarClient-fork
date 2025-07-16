@@ -116,6 +116,19 @@ mod.watermark.description=显示自定义水印文本
 setting.text=文本
 setting.text.description=自定义水印文本
 
+mod.clientspoof.name=クライアント偽装
+mod.clientspoof.description=サーバーにクライアントブランドを偽装
+
+setting.clientspoof.mode=モード
+setting.clientspoof.mode.description=クライアント偽装モードを選択
+setting.clientspoof.vanilla=バニラ
+setting.clientspoof.lunar1204=Lunar 1.20.4
+setting.clientspoof.lunar1201=Lunar 1.20.1
+setting.clientspoof.custom=カスタム
+setting.clientspoof.null=なし
+setting.clientspoof.custom=カスタムクライアント
+setting.clientspoof.custom.description=偽装用のカスタムクライアント名
+
 mod.watermark.name=ウォーターマーク
 mod.watermark.description=カスタムウォーターマークテキストを表示
 setting.text=テキスト

@@ -25,7 +25,12 @@ public class AutoGGMod extends Mod {
 	private NumberSetting delaySetting = new NumberSetting("setting.delay", "setting.delay.description", Icon.TIMER,
 			this, 0, 0, 5, 1);
 	private StringSetting messageSetting = new StringSetting("setting.message", "setting.message.description",
-			Icon.TEXT_FIELDS, this, "gg");
+        Icon.TEXT_FIELDS, this, "gg") {
+        @Override
+        public boolean isVisible() {
+            return false;
+        }
+    };
 	private BooleanSetting hypixelSetting = new BooleanSetting("setting.hypixel", "setting.hypixel.description",
 			Icon.TOGGLE_OFF, this, true);
 
