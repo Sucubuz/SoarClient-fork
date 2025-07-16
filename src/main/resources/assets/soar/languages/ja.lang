@@ -111,6 +111,17 @@ mod.namedisplay.description=自分の名前を表示
 mod.pingdisplay.name=ping表示
 mod.pingdisplay.description=現在のpingを表示
 
+mod.watermark.name=水印
+mod.watermark.description=显示自定义水印文本
+setting.text=文本
+setting.text.description=自定义水印文本
+
+mod.watermark.name=ウォーターマーク
+mod.watermark.description=カスタムウォーターマークテキストを表示
+setting.text=テキスト
+setting.text.description=カスタムウォーターマークテキスト
+mode.icon=アイコン
+
 mod.weatherdisplay.name=天気表示
 mod.weatherdisplay.description=現在の天気を表示
 
