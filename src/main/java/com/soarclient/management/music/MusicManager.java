@@ -116,20 +116,25 @@ public class MusicManager {
 		String artist = null;
 		byte[] imageData = null;
 
-		for (Metadata meta : metadata) {
-			if (meta instanceof VorbisComment) {
-				VorbisComment comment = (VorbisComment) meta;
-				if (comment.getCommentByName("TITLE").length > 0) {
-					title = comment.getCommentByName("TITLE")[0];
-				}
-				if (comment.getCommentByName("ARTIST").length > 0) {
-					artist = comment.getCommentByName("ARTIST")[0];
-				}
-			} else if (meta instanceof Picture) {
-				Picture picture = (Picture) meta;
-				imageData = picture.getImage();
-			}
-		}
+        for (Metadata meta : metadata) {
+            if (meta instanceof VorbisComment) {
+                VorbisComment comment = (VorbisComment) meta;
+                String[] titles = comment.getCommentByName("TITLE");
+                if (titles!=null && titles.length > 0) {
+                    title = titles[0];
+                } else {
+                    String fileName = f.getName();
+                    title= fileName.substring(0, fileName.lastIndexOf("."));
+                }
+                String[] artists = comment.getCommentByName("ARTIST");
+                if (artists!=null && artists.length > 0) {
+                    artist = artists[0];
+                }
+            } else if (meta instanceof Picture) {
+                Picture picture = (Picture) meta;
+                imageData = picture.getImage();
+            }
+        }
 
 		String fileHash = FileUtils.getMd5Checksum(f);
 		File album = new File(FileLocation.CACHE_DIR, fileHash);
