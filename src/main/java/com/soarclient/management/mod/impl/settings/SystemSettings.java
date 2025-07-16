@@ -34,7 +34,12 @@ public class SystemSettings extends Mod {
 					Icon.CONVERSION_PATH, this, null, "exe");
 		} else if (OS.isMacOS() || OS.isLinux()) {
 			ytdlpCommandSetting = new StringSetting("setting.ytdlpcommand", "setting.ytdlpcommand.description",
-					Icon.TERMINAL, this, "yt-dlp");
+                Icon.TERMINAL, this, "yt-dlp") {
+                @Override
+                public boolean isVisible() {
+                    return false;
+                }
+            };
 		}
 	}
 

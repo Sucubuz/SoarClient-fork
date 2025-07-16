@@ -106,7 +106,8 @@ public class ModManager {
 		mods.add(new TimeChangerMod());
 		mods.add(new WeatherChangerMod());
         mods.add(new FakeFPSMod());
-		
+        mods.add(new ClientSpoofMod());
+
 		// Settings
 		mods.add(new HUDModSettings());
 		mods.add(new ModMenuSettings());

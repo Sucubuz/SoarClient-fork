@@ -20,7 +20,12 @@ public class WatermarkMod extends HUDMod {
     private static WatermarkMod instance;
 
     private StringSetting textSetting = new StringSetting("setting.text",
-        "setting.text.description", Icon.TEXT_FIELDS, this, "Soar Client");
+        "setting.text.description", Icon.TEXT_FIELDS, this, "Soar Client") {
+        @Override
+        public boolean isVisible() {
+            return false;
+        }
+    };
 
     public WatermarkMod() {
         super("mod.watermark.name", "mod.watermark.description", Icon.BRANDING_WATERMARK);
