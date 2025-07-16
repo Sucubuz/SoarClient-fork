@@ -1,7 +1,9 @@
 package com.soarclient.management.mod.impl.settings;  
   
-import java.util.Arrays;  
-  
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.lwjgl.glfw.GLFW;  
   
 import com.soarclient.Soar;  
@@ -17,8 +19,9 @@ import com.soarclient.management.mod.settings.impl.ComboSetting;
 import com.soarclient.management.mod.settings.impl.HctColorSetting;  
 import com.soarclient.management.mod.settings.impl.KeybindSetting;  
 import com.soarclient.management.mod.settings.impl.NumberSetting;  
-import com.soarclient.skia.font.Icon;  
-import com.soarclient.utils.language.I18n;  
+import com.soarclient.skia.font.Icon;
+import com.soarclient.skia.font.Fonts;
+import com.soarclient.utils.language.I18n;
 import com.soarclient.utils.language.Language;  
   
 import net.minecraft.client.gui.screen.Screen;  
@@ -42,18 +45,39 @@ public class ModMenuSettings extends Mod {
             "setting.blurintensity.description", Icon.BLUR_LINEAR, this, 5, 1, 20, 1);  
       
     private ComboSetting languageSetting = new ComboSetting("setting.language", "setting.language.description",  
-            Icon.LANGUAGE, this, Arrays.asList("language.english", "language.chinese", "language.japanese"), "language.english");  
-  
-    private Screen modMenu;  
-  
+            Icon.LANGUAGE, this, Arrays.asList("language.english", "language.chinese", "language.japanese"), "language.english");
+
+    private ComboSetting fontSetting;
+
+    private Screen modMenu;
+
     public ModMenuSettings() {  
         super("mod.modmenu.name", "mod.modmenu.description", Icon.MENU, ModCategory.MISC);  
   
         instance = this;  
         this.setHidden(true);  
-        this.setEnabled(true);  
-    }  
-  
+        this.setEnabled(true);
+        initFontSetting();
+    }
+
+    private void initFontSetting() {
+        List<String> fontOptions = new ArrayList<>(Arrays.asList(
+            "font.default",
+            "font.microsoft_yahei",
+            "font.noto_sans"
+        ));
+
+        String[] customFonts = Fonts.getCustomFontNames();
+        if (customFonts != null && customFonts.length > 0) {
+            // 直接添加字体文件名作为选项
+            fontOptions.addAll(Arrays.asList(customFonts));
+            System.out.println("Added custom fonts to options: " + Arrays.toString(customFonts));
+        }
+
+        fontSetting = new ComboSetting("setting.font", "setting.font.description",
+            Icon.TEXT_FORMAT, this, fontOptions, "font.default");
+    }
+
     private void initializeLanguageSetting() {  
         String configLanguage = languageSetting.getOption();  
         Language targetLanguage = null;  
@@ -159,11 +183,15 @@ public final EventBus.EventListener<ClientTickEvent> onClientTick = event -> {
         return blurIntensitySetting;  
     }  
   
-    public ComboSetting getLanguageSetting() {  
-        return languageSetting;  
-    }  
-  
-    public Screen getModMenu() {  
-        return modMenu;  
-    }  
+    public ComboSetting getLanguageSetting() {
+        return languageSetting;
+    }
+
+    public ComboSetting getFontSetting() {
+        return fontSetting;
+    }
+
+    public Screen getModMenu() {
+        return modMenu;
+    }
 }

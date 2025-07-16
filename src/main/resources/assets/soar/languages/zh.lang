@@ -199,6 +199,14 @@ setting.darkmode=深色模式
 setting.darkmode.description=启用深色模式
 setting.keybind=快捷键
 setting.keybind.description=设置快捷键
+
+setting.font=字体
+setting.font.description=更改客户端字体
+font.default=默认 (Inter)
+font.microsoft_yahei=微软雅黑
+font.noto_sans=思源黑体
+custom.font=%s
+
 setting.icon=图标
 setting.icon.description=设置显示的图标
 setting.color=颜色
