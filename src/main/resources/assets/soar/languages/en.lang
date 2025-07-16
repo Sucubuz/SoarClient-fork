@@ -153,6 +153,12 @@ mod.cpsdisplay.description=Display clicks per second
 setting.rightclick=Right Click
 setting.rightclick.description=Show right click CPS
 
+mod.watermark.name=Watermark
+mod.watermark.description=Display custom watermark text
+setting.text=Text
+setting.text.description=Custom watermark text
+mode.icon=Icon
+
 mod.particles.name=Particles
 mod.particles.description=Customize the particles
 
