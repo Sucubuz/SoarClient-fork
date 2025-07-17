@@ -26,142 +26,147 @@ import io.github.humbleui.types.Rect;
 
 public class MusicInfoMod extends SimpleHUDMod {
 
-	private final TimerUtils timer = new TimerUtils();
-	private float mx, my, dx, dy;
+    private final TimerUtils timer = new TimerUtils();
+    private float mx, my, dx, dy;
 
-	private final ComboSetting typeSetting = new ComboSetting("setting.type", "setting.type.description",
-			Icon.FORMAT_LIST_BULLETED, this, Arrays.asList("setting.simple", "setting.normal", "setting.cover"),
-			"setting.simple");
+    private final ComboSetting typeSetting = new ComboSetting("setting.type", "setting.type.description",
+        Icon.FORMAT_LIST_BULLETED, this, Arrays.asList("setting.simple", "setting.normal", "setting.cover"),
+        "setting.simple");
 
     private final BooleanSetting backgroundSetting = new BooleanSetting("setting.background",
-            "setting.background.description", Icon.IMAGE, this, true);
+        "setting.background.description", Icon.IMAGE, this, true) {
+        @Override
+        public boolean isVisible() {
+            return typeSetting.getOption().equals("setting.normal");
+        }
+    };
 
-	public MusicInfoMod() {
-		super("mod.musicinfo.name", "mod.musicinfo.description", Icon.MUSIC_NOTE);
-		dx = 1;
-		dy = 1;
-	}
+    public MusicInfoMod() {
+        super("mod.musicinfo.name", "mod.musicinfo.description", Icon.MUSIC_NOTE);
+        dx = 1;
+        dy = 1;
+    }
 
-	public EventBus.EventListener<RenderSkiaEvent> onRenderSkia = event -> {
+    public EventBus.EventListener<RenderSkiaEvent> onRenderSkia = event -> {
 
-		String type = typeSetting.getOption();
+        String type = typeSetting.getOption();
 
-		float width = 180;
-		float height = 45;
+        float width = 180;
+        float height = 45;
 
-		if (type.equals("setting.simple")) {
-			this.draw();
-		} else {
-			this.begin();
-			drawInfo(width, height);
-			this.finish();
-			position.setSize(width, height);
-		}
-	};
+        if (type.equals("setting.simple")) {
+            this.draw();
+        } else {
+            this.begin();
+            drawInfo(width, height);
+            this.finish();
+            position.setSize(width, height);
+        }
+    };
 
-	private void drawInfo(float width, float height) {
+    private void drawInfo(float width, float height) {
 
-		String type = typeSetting.getOption();
+        String type = typeSetting.getOption();
 
-		MusicManager musicManager = Soar.getInstance().getMusicManager();
-		Music m = musicManager.getCurrentMusic();
-		float padding = 4.5F;
-		float albumSize = height - (padding * 2);
+        MusicManager musicManager = Soar.getInstance().getMusicManager();
+        Music m = musicManager.getCurrentMusic();
+        float padding = 4.5F;
+        float albumSize = height - (padding * 2);
 
-		boolean cover = type.equals("setting.cover");
-		Color textColor = cover ? Color.WHITE : this.getDesign().getTextColor();
-		float coverSize = 256;
+        boolean cover = type.equals("setting.cover");
+        Color textColor = cover ? Color.WHITE : this.getDesign().getTextColor();
+        float coverSize = 256;
 
-		if (backgroundSetting.isEnabled()) {
+        if (backgroundSetting.isEnabled()) {
             this.drawBackground(getX(), getY(), width, height);
         }
 
-		if (m != null && cover && m.getAlbum() != null) {
-			Skia.save();
-			Skia.clip(getX(), getY(), width, height, getRadius());
-			drawBlurredImage(m.getAlbum(), getX() - mx, getY() - my, coverSize, coverSize, 20);
-			Skia.restore();
-		}
+        if (m != null && cover && m.getAlbum() != null) {
+            Skia.save();
+            Skia.clip(getX(), getY(), width, height, getRadius());
+            drawBlurredImage(m.getAlbum(), getX() - mx, getY() - my, coverSize, coverSize, 20);
+            Skia.restore();
+        }
 
-		if (m != null && m.getAlbum() != null) {
-			Skia.drawRoundedImage(m.getAlbum(), getX() + padding, getY() + padding, albumSize, albumSize, 6);
-		} else {
-			Skia.drawRoundedRect(getX() + padding, getY() + padding, albumSize, albumSize, 6,
-					ColorUtils.applyAlpha(textColor, 0.2F));
-		}
+        if (m != null && m.getAlbum() != null) {
+            Skia.drawRoundedImage(m.getAlbum(), getX() + padding, getY() + padding, albumSize, albumSize, 6);
+        } else {
+            Skia.drawRoundedRect(getX() + padding, getY() + padding, albumSize, albumSize, 6,
+                ColorUtils.applyAlpha(textColor, 0.2F));
+        }
 
-		if (m != null) {
+        if (m != null) {
 
-			float offsetX = (padding * 2) + albumSize;
-			String limitedTitle = Skia.getLimitText(m.getTitle(), Fonts.getRegular(9), width - offsetX - 12);
-			String limitedArtist = Skia.getLimitText(m.getArtist(), Fonts.getRegular(6.5F), width - offsetX - 10);
+            float offsetX = (padding * 2) + albumSize;
+            String limitedTitle = Skia.getLimitText(m.getTitle(), Fonts.getRegular(9), width - offsetX - 12);
+            String limitedArtist = Skia.getLimitText(m.getArtist(), Fonts.getRegular(6.5F), width - offsetX - 10);
 
-			Skia.drawText(limitedTitle, getX() + offsetX, getY() + padding + 3F, textColor, Fonts.getRegular(9));
-			Skia.drawText(limitedArtist, getX() + offsetX, getY() + padding + 12F,
-					ColorUtils.applyAlpha(textColor, 0.8F), Fonts.getRegular(6.5F));
-		}
+            Skia.drawText(limitedTitle, getX() + offsetX, getY() + padding + 3F, textColor, Fonts.getRegular(9));
+            Skia.drawText(limitedArtist, getX() + offsetX, getY() + padding + 12F,
+                ColorUtils.applyAlpha(textColor, 0.8F), Fonts.getRegular(6.5F));
+        }
 
-		if (timer.delay(80)) {
-			updatePosition(width, height, coverSize);
-			timer.reset();
-		}
-	}
+        if (timer.delay(80)) {
+            updatePosition(width, height, coverSize);
+            timer.reset();
+        }
+    }
 
-	private void drawBlurredImage(File file, float x, float y, float width, float height, float blurRadius) {
+    private void drawBlurredImage(File file, float x, float y, float width, float height, float blurRadius) {
 
-		Paint blurPaint = new Paint();
-		blurPaint.setImageFilter(ImageFilter.makeBlur(blurRadius, blurRadius, FilterTileMode.REPEAT));
+        Paint blurPaint = new Paint();
+        blurPaint.setImageFilter(ImageFilter.makeBlur(blurRadius, blurRadius, FilterTileMode.REPEAT));
 
-		Skia.drawImage(file, x, y, width, height);
+        Skia.drawImage(file, x, y, width, height);
 
-		if (Skia.getImageHelper().load(file)) {
-			Image image = Skia.getImageHelper().get(file.getName());
-			if (image != null) {
-				Skia.getCanvas().drawImageRect(image, Rect.makeWH(image.getWidth(), image.getHeight()),
-						Rect.makeXYWH(x, y, width, height), blurPaint, true);
-			}
-		}
-	}
+        if (Skia.getImageHelper().load(file)) {
+            Image image = Skia.getImageHelper().get(file.getName());
+            if (image != null) {
+                Skia.getCanvas().drawImageRect(image, Rect.makeWH(image.getWidth(), image.getHeight()),
+                    Rect.makeXYWH(x, y, width, height), blurPaint, true);
+            }
+        }
+    }
 
-	private void updatePosition(float width, float height, float coverSize) {
+    private void updatePosition(float width, float height, float coverSize) {
 
-		mx += dx;
-		my += dy;
+        mx += dx;
+        my += dy;
 
-		if (mx <= 0 || mx + width >= coverSize) {
-			dx = -dx;
-			if (mx <= 0) {
-				mx = 0;
-			}
-			if (mx + width >= coverSize) {
-				mx = coverSize - width;
-			}
-		}
-		if (my <= 0 || my + height >= coverSize) {
-			dy = -dy;
-			if (my <= 0) {
-				my = 0;
-			}
-			if (my + height >= coverSize) {
-				my = coverSize - height;
-			}
-		}
-	}
+        if (mx <= 0 || mx + width >= coverSize) {
+            dx = -dx;
+            if (mx <= 0) {
+                mx = 0;
+            }
+            if (mx + width >= coverSize) {
+                mx = coverSize - width;
+            }
+        }
+        if (my <= 0 || my + height >= coverSize) {
+            dy = -dy;
+            if (my <= 0) {
+                my = 0;
+            }
+            if (my + height >= coverSize) {
+                my = coverSize - height;
+            }
+        }
+    }
 
-	@Override
-	public String getText() {
+    @Override
+    public String getText() {
 
-		MusicManager musicManager = Soar.getInstance().getMusicManager();
+        MusicManager musicManager = Soar.getInstance().getMusicManager();
 
-		if (musicManager.getCurrentMusic() != null && musicManager.isPlaying()) {
-			return "Playing: " + musicManager.getCurrentMusic().getTitle();
-		} else {
-			return "Nothing is Playing";
-		}
-	}
+        if (musicManager.getCurrentMusic() != null && musicManager.isPlaying()) {
+            return "Playing: " + musicManager.getCurrentMusic().getTitle();
+        } else {
+            return "Nothing is Playing";
+        }
+    }
 
-	@Override
-	public String getIcon() {
-		return Icon.MUSIC_NOTE;
-	}
+    @Override
+    public String getIcon() {
+        return Icon.MUSIC_NOTE;
+    }
 }

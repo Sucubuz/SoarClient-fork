@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomePage extends Page {
-    private static final float CARD_WIDTH = 300;
+    private static final float CARD_WIDTH = 400;
     private static final float CARD_HEIGHT = 120;
     private static final float TIPS_WIDTH = 400;
     private float cardX;
