@@ -129,6 +129,9 @@ setting.clientspoof.null=なし
 setting.clientspoof.custom=カスタムクライアント
 setting.clientspoof.custom.description=偽装用のカスタムクライアント名
 
+tips.oldanimations.title=ヒント:
+tips.oldanimations.content=現在、旧アニメーションを使用するにはViaFabricPlusプロトコルのクロスバージョンを1.8.xに有効にする必要があります。そうしないとクラッシュします
+
 mod.watermark.name=ウォーターマーク
 mod.watermark.description=カスタムウォーターマークテキストを表示
 setting.text=テキスト
