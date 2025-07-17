@@ -4,35 +4,38 @@ import com.soarclient.Soar;
 import com.soarclient.management.mod.Mod;
 import com.soarclient.management.mod.settings.Setting;
 
-public abstract class StringSetting extends Setting {
+public class StringSetting extends Setting {
 
-	private String defaultValue, value;
+    private String defaultValue, value;
 
-	public StringSetting(String name, String description, String icon, Mod parent, String string) {
-		super(name, description, icon, parent);
+    public StringSetting(String name, String description, String icon, Mod parent, String string) {
+        super(name, description, icon, parent);
 
-		this.defaultValue = string;
-		this.value = string;
+        this.defaultValue = string;
+        this.value = string;
 
-		Soar.getInstance().getModManager().addSetting(this);
-	}
+        Soar.getInstance().getModManager().addSetting(this);
+    }
 
-	@Override
-	public void reset() {
-		this.value = defaultValue;
-	}
+    @Override
+    public void reset() {
+        this.value = defaultValue;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String string) {
-		this.value = string;
-	}
+    public void setValue(String string) {
+        this.value = string;
+    }
 
-	public String getDefaultValue() {
-		return defaultValue;
-	}
+    public String getDefaultValue() {
+        return defaultValue;
+    }
 
-    public abstract boolean isVisible();
+    @Override
+    public boolean isVisible() {
+        return true;
+    }
 }

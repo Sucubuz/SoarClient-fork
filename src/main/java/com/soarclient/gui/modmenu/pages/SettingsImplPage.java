@@ -19,132 +19,156 @@ import com.soarclient.utils.language.I18n;
 
 public class SettingsImplPage extends Page {
 
-	private List<SettingBar> bars = new ArrayList<>();
+    private List<SettingBar> bars = new ArrayList<>();
+    private List<Setting> lastVisibleSettings = new ArrayList<>();
 
-	private Class<? extends Page> prevPage;
-	private Mod mod;
+    private Class<? extends Page> prevPage;
+    private Mod mod;
 
-	public SettingsImplPage(SoarGui parent, Class<? extends Page> prevPage, Mod mod) {
-		super(parent, "text.mods", Icon.SETTINGS, new RightTransition(true));
-		this.prevPage = prevPage;
-		this.mod = mod;
-	}
+    public SettingsImplPage(SoarGui parent, Class<? extends Page> prevPage, Mod mod) {
+        super(parent, "text.mods", Icon.SETTINGS, new RightTransition(true));
+        this.prevPage = prevPage;
+        this.mod = mod;
+    }
 
-	@Override
-	public void init() {
-		super.init();
+    @Override
+    public void init() {
+        super.init();
+        rebuildSettingBars();
+        parent.setClosable(false);
+    }
 
-		bars.clear();
+    private void rebuildSettingBars() {
+        bars.clear();
+        lastVisibleSettings.clear();
 
-		for (Setting s : Soar.getInstance().getModManager().getSettingsByMod(mod)) {
-			SettingBar bar = new SettingBar(s, x + 32, y + 32, width - 64);
-			bars.add(bar);
-		}
+        for (Setting s : Soar.getInstance().getModManager().getSettingsByMod(mod)) {
+            if (s.isVisible()) {
+                SettingBar bar = new SettingBar(s, x + 32, y + 32, width - 64);
+                bars.add(bar);
+                lastVisibleSettings.add(s);
+            }
+        }
+    }
 
-		parent.setClosable(false);
-	}
+    private boolean hasVisibilityChanged() {
+        List<Setting> currentVisibleSettings = new ArrayList<>();
+        for (Setting s : Soar.getInstance().getModManager().getSettingsByMod(mod)) {
+            if (s.isVisible()) {
+                currentVisibleSettings.add(s);
+            }
+        }
 
-	@Override
-	public void draw(double mouseX, double mouseY) {
-		super.draw(mouseX, mouseY);
+        if (currentVisibleSettings.size() != lastVisibleSettings.size()) {
+            return true;
+        }
 
-		float offsetY = 96;
+        for (int i = 0; i < currentVisibleSettings.size(); i++) {
+            if (!currentVisibleSettings.get(i).equals(lastVisibleSettings.get(i))) {
+                return true;
+            }
+        }
 
-		mouseY = mouseY - scrollHelper.getValue();
+        return false;
+    }
 
-		Skia.save();
-		Skia.translate(0, scrollHelper.getValue());
+    @Override
+    public void draw(double mouseX, double mouseY) {
+        super.draw(mouseX, mouseY);
 
-		for (SettingBar b : bars) {
+        if (hasVisibilityChanged()) {
+            rebuildSettingBars();
+        }
 
-			if (!searchBar.getText().isEmpty() && !SearchUtils.isSimilar(I18n.get(b.getTitle()), searchBar.getText())) {
-				continue;
-			}
+        float offsetY = 96;
 
-			b.setY(y + offsetY);
-			b.draw(mouseX, mouseY);
+        mouseY = mouseY - scrollHelper.getValue();
 
-			offsetY += b.getHeight() + 18;
-		}
+        Skia.save();
+        Skia.translate(0, scrollHelper.getValue());
 
-		scrollHelper.setMaxScroll(offsetY, height);
-		Skia.restore();
-	}
+        for (SettingBar b : bars) {
 
-	@Override
-	public void mousePressed(double mouseX, double mouseY, int button) {
-		super.mousePressed(mouseX, mouseY, button);
+            if (!searchBar.getText().isEmpty() && !SearchUtils.isSimilar(I18n.get(b.getTitle()), searchBar.getText())) {
+                continue;
+            }
 
-		mouseY = mouseY - scrollHelper.getValue();
+            b.setY(y + offsetY);
+            b.draw(mouseX, mouseY);
 
-		searchBar.mousePressed(mouseX, mouseY, button);
+            offsetY += b.getHeight() + 18;
+        }
 
-		for (SettingBar b : bars) {
+        scrollHelper.setMaxScroll(offsetY, height);
+        Skia.restore();
+    }
 
-			if (!searchBar.getText().isEmpty() && !SearchUtils.isSimilar(I18n.get(b.getTitle()), searchBar.getText())) {
-				continue;
-			}
+    @Override
+    public void mousePressed(double mouseX, double mouseY, int button) {
+        super.mousePressed(mouseX, mouseY, button);
 
-			b.mousePressed(mouseX, mouseY, button);
-		}
-	}
+        mouseY = mouseY - scrollHelper.getValue();
 
-	@Override
-	public void mouseReleased(double mouseX, double mouseY, int button) {
-		super.mouseReleased(mouseX, mouseY, button);
+        searchBar.mousePressed(mouseX, mouseY, button);
 
-		mouseY = (int) (mouseY - scrollHelper.getValue());
+        for (SettingBar b : bars) {
 
-		searchBar.mousePressed(mouseX, mouseY, button);
+            if (!searchBar.getText().isEmpty() && !SearchUtils.isSimilar(I18n.get(b.getTitle()), searchBar.getText())) {
+                continue;
+            }
 
-		for (SettingBar b : bars) {
+            b.mousePressed(mouseX, mouseY, button);
+        }
+    }
 
-			if (!searchBar.getText().isEmpty() && !SearchUtils.isSimilar(I18n.get(b.getTitle()), searchBar.getText())) {
-				continue;
-			}
+    @Override
+    public void mouseReleased(double mouseX, double mouseY, int button) {
+        super.mouseReleased(mouseX, mouseY, button);
 
-			b.mouseReleased(mouseX, mouseY, button);
-		}
-	}
+        mouseY = (int) (mouseY - scrollHelper.getValue());
 
-	@Override
-	public void charTyped(char chr, int modifiers) {
-		super.charTyped(chr, modifiers);
+        searchBar.mousePressed(mouseX, mouseY, button);
 
-		for (SettingBar b : bars) {
+        for (SettingBar b : bars) {
 
-			if (!searchBar.getText().isEmpty() && !SearchUtils.isSimilar(I18n.get(b.getTitle()), searchBar.getText())) {
-				continue;
-			}
+            if (!searchBar.getText().isEmpty() && !SearchUtils.isSimilar(I18n.get(b.getTitle()), searchBar.getText())) {
+                continue;
+            }
 
-			b.charTyped(chr, modifiers);
-		}
-	}
+            b.mouseReleased(mouseX, mouseY, button);
+        }
+    }
 
-	@Override
-	public void keyPressed(int keyCode, int scanCode, int modifiers) {
-		super.keyPressed(keyCode, scanCode, modifiers);
+    @Override
+    public void charTyped(char chr, int modifiers) {
+        super.charTyped(chr, modifiers);
 
-		for (SettingBar b : bars) {
+        for (SettingBar b : bars) {
 
-			if (!searchBar.getText().isEmpty() && !SearchUtils.isSimilar(I18n.get(b.getTitle()), searchBar.getText())) {
-				continue;
-			}
+            if (!searchBar.getText().isEmpty() && !SearchUtils.isSimilar(I18n.get(b.getTitle()), searchBar.getText())) {
+                continue;
+            }
 
-			b.keyPressed(keyCode, scanCode, modifiers);
-		}
+            b.charTyped(chr, modifiers);
+        }
+    }
 
-		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-			parent.setClosable(true);
-			parent.setCurrentPage(prevPage);
-		}
-	}
+    @Override
+    public void keyPressed(int keyCode, int scanCode, int modifiers) {
+        super.keyPressed(keyCode, scanCode, modifiers);
 
-	@Override
-	public void onClosed() {
-		if (!parent.isClosable()) {
-			parent.setClosable(true);
-			parent.getPage(prevPage).onClosed();
-		}
-	}
+        for (SettingBar b : bars) {
+
+            if (!searchBar.getText().isEmpty() && !SearchUtils.isSimilar(I18n.get(b.getTitle()), searchBar.getText())) {
+                continue;
+            }
+
+            b.keyPressed(keyCode, scanCode, modifiers);
+        }
+
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            parent.setClosable(true);
+            parent.setCurrentPage(prevPage);
+        }
+    }
 }
