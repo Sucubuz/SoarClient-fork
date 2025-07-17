@@ -39,7 +39,7 @@ public class Fonts {
             customFonts.clear();
             File[] fontFiles = fontDir.listFiles((dir, name) ->
                 name.toLowerCase().endsWith(".ttf") ||
-                name.toLowerCase().endsWith(".otf"));
+                    name.toLowerCase().endsWith(".otf"));
 
             if (fontFiles != null) {
                 for (File fontFile : fontFiles) {
@@ -111,6 +111,10 @@ public class Fonts {
 
     private static Font getCurrentFont(float size) {
         String selectedFont = ModMenuSettings.getInstance().getFontSetting().getOption();
+        if ("font.default".equals(selectedFont)) {
+            return FontHelper.load(REGULAR, size);
+        }
+
         try {
             for (String existingFont : customFonts.keySet()) {
                 String existingFontName = existingFont;
@@ -122,6 +126,7 @@ public class Fonts {
                 }
             }
 
+            // try system font
             switch (selectedFont) {
                 case "font.microsoft_yahei":
                     return createSystemFont("Microsoft YaHei", size);
@@ -132,6 +137,7 @@ public class Fonts {
                     }
                     return font != null ? font : FontHelper.load(REGULAR, size);
                 default:
+                    // if not found,return regular Font
                     return FontHelper.load(REGULAR, size);
             }
         } catch (Exception e) {

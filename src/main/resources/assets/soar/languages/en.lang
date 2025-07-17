@@ -172,6 +172,9 @@ setting.text=Text
 setting.text.description=Custom watermark text
 mode.icon=Icon
 
+tips.oldanimations.title=Tips:
+tips.oldanimations.content=Currently, Old Animations requires ViaFabricPlus protocol cross-version to 1.8.x to be enabled, otherwise it will crash
+
 mod.particles.name=Particles
 mod.particles.description=Customize the particles
 
