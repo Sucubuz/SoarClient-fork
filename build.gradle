@@ -70,6 +70,7 @@ dependencies {
 	jij 'com.mpatric:mp3agic:0.9.1'
 	jij 'javazoom:jlayer:1.0.1'
 	jij 'com.googlecode.soundlibs:mp3spi:1.9.5.4'
+	jij 'org:jaudiotagger:2.0.3'
 	jij 'com.googlecode.soundlibs:jlayer:1.0.1.4'
 	jij 'com.kohlschutter.junixsocket:junixsocket-common:2.10.1'
 	jij 'org.java-websocket:Java-WebSocket:1.6.0'

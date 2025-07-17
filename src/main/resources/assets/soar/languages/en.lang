@@ -172,6 +172,9 @@ setting.text=Text
 setting.text.description=Custom watermark text
 mode.icon=Icon
 
+setting.lyrics.display=Lyrics Display
+setting.lyrics.display.description=Show lyrics for the currently playing music
+
 tips.oldanimations.title=Tips:
 tips.oldanimations.content=Currently, Old Animations requires ViaFabricPlus protocol cross-version to 1.8.x to be enabled, otherwise it will crash
 
