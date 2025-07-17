@@ -57,9 +57,10 @@ public class ModMenuSettings extends Mod {
     private void initFontSetting() {
         List<String> fontOptions = new ArrayList<>();
 
+        fontOptions.add("font.default");
+
         String[] customFonts = Fonts.getCustomFontNames();
         if (customFonts.length > 0) {
-            // 直接添加字体文件名作为选项
             fontOptions.addAll(Arrays.asList(customFonts));
             System.out.println("Added custom fonts to options: " + Arrays.toString(customFonts));
         }
