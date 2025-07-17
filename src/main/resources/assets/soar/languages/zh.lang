@@ -122,6 +122,9 @@ setting.text=文本
 setting.text.description=自定义水印文本
 mode.icon=图标
 
+setting.lyrics.display=歌词显示
+setting.lyrics.display.description=显示当前播放音乐的歌词
+
 tips.oldanimations.title=提示:
 tips.oldanimations.content=目前旧版动画需要开启ViaFabricPlus协议跨版本到1.8.x才可以使用，否则会崩溃
 

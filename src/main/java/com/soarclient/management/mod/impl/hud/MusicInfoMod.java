@@ -12,6 +12,7 @@ import com.soarclient.management.mod.settings.impl.ComboSetting;
 import com.soarclient.management.mod.settings.impl.BooleanSetting;
 import com.soarclient.management.music.Music;
 import com.soarclient.management.music.MusicManager;
+import com.soarclient.management.music.lyrics.LyricsManager;
 import com.soarclient.skia.Skia;
 import com.soarclient.skia.font.Fonts;
 import com.soarclient.skia.font.Icon;
@@ -34,12 +35,18 @@ public class MusicInfoMod extends SimpleHUDMod {
         "setting.simple");
 
     private final BooleanSetting backgroundSetting = new BooleanSetting("setting.background",
-        "setting.background.description", Icon.IMAGE, this, true) {
+        "setting.background.description", Icon.IMAGE, this, true);
+
+    private final BooleanSetting lyricsDisplaySetting = new BooleanSetting("setting.lyrics.display",
+        "setting.lyrics.display.description", Icon.TEXT_FIELDS, this, false) {
         @Override
         public boolean isVisible() {
-            return typeSetting.getOption().equals("setting.normal");
+            String type = typeSetting.getOption();
+            return type.equals("setting.normal") || type.equals("setting.cover");
         }
     };
+
+    private final LyricsManager lyricsManager = new LyricsManager();
 
     public MusicInfoMod() {
         super("mod.musicinfo.name", "mod.musicinfo.description", Icon.MUSIC_NOTE);
@@ -53,6 +60,7 @@ public class MusicInfoMod extends SimpleHUDMod {
 
         float width = 180;
         float height = 45;
+
 
         if (type.equals("setting.simple")) {
             this.draw();
@@ -72,6 +80,7 @@ public class MusicInfoMod extends SimpleHUDMod {
         Music m = musicManager.getCurrentMusic();
         float padding = 4.5F;
         float albumSize = height - (padding * 2);
+
 
         boolean cover = type.equals("setting.cover");
         Color textColor = cover ? Color.WHITE : this.getDesign().getTextColor();
@@ -104,6 +113,18 @@ public class MusicInfoMod extends SimpleHUDMod {
             Skia.drawText(limitedTitle, getX() + offsetX, getY() + padding + 3F, textColor, Fonts.getRegular(9));
             Skia.drawText(limitedArtist, getX() + offsetX, getY() + padding + 12F,
                 ColorUtils.applyAlpha(textColor, 0.8F), Fonts.getRegular(6.5F));
+
+            if (lyricsDisplaySetting.isEnabled()) {
+                float currentTime = musicManager.getCurrentTime();
+                String currentLyric = lyricsManager.getCurrentLyric(m, currentTime);
+
+                if (currentLyric != null && !currentLyric.isEmpty()) {
+                    float lyricY = getY() + padding + 24F; // 在艺术家文本下方
+                    String limitedLyric = Skia.getLimitText(currentLyric, Fonts.getRegular(7), width - offsetX - 10);
+                    Skia.drawText(limitedLyric, getX() + offsetX, lyricY,
+                        ColorUtils.applyAlpha(textColor, 0.9F), Fonts.getRegular(7));
+                }
+            }
         }
 
         if (timer.delay(80)) {

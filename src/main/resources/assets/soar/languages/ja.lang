@@ -141,6 +141,9 @@ mode.icon=アイコン
 mod.weatherdisplay.name=天気表示
 mod.weatherdisplay.description=現在の天気を表示
 
+setting.lyrics.display=歌詞表示
+setting.lyrics.display.description=現在再生中の音楽の歌詞を表示
+
 mod.playtimedisplay.name=プレイ時間表示
 mod.playtimedisplay.description=プレイ時間を表示
 
