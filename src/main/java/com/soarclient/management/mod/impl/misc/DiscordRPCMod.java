@@ -35,7 +35,7 @@ public class DiscordRPCMod extends Mod {
 
 				RichPresence.Builder builder = new RichPresence.Builder();
 
-				builder.setState("Playing Soar Client v" + Soar.getInstance().getVersion())
+				builder.setState("Playing Soar-fork Client v" + Soar.getInstance().getVersion())
 						.setStartTimestamp(OffsetDateTime.now().toEpochSecond()).setLargeImage("icon")
 						.setActivityType(ActivityType.Playing);
 
