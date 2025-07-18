@@ -39,6 +39,7 @@ public class MusicInfoMod extends SimpleHUDMod {
 
     private final BooleanSetting lyricsDisplaySetting = new BooleanSetting("setting.lyrics.display",
         "setting.lyrics.display.description", Icon.TEXT_FIELDS, this, false) {
+
         @Override
         public boolean isVisible() {
             String type = typeSetting.getOption();
@@ -90,7 +91,7 @@ public class MusicInfoMod extends SimpleHUDMod {
             this.drawBackground(getX(), getY(), width, height);
         }
 
-        if (m != null && cover && m.getAlbum() != null) {
+        if (m != null && m.getAlbum() != null && cover) {
             Skia.save();
             Skia.clip(getX(), getY(), width, height, getRadius());
             drawBlurredImage(m.getAlbum(), getX() - mx, getY() - my, coverSize, coverSize, 20);
@@ -107,8 +108,10 @@ public class MusicInfoMod extends SimpleHUDMod {
         if (m != null) {
 
             float offsetX = (padding * 2) + albumSize;
-            String limitedTitle = Skia.getLimitText(m.getTitle(), Fonts.getRegular(9), width - offsetX - 12);
-            String limitedArtist = Skia.getLimitText(m.getArtist(), Fonts.getRegular(6.5F), width - offsetX - 10);
+            float maxTextWidth = width - offsetX - 12;
+
+            String limitedTitle = Skia.getLimitText(m.getTitle(), Fonts.getRegular(9), maxTextWidth);
+            String limitedArtist = Skia.getLimitText(m.getArtist(), Fonts.getRegular(6.5F), maxTextWidth);
 
             Skia.drawText(limitedTitle, getX() + offsetX, getY() + padding + 3F, textColor, Fonts.getRegular(9));
             Skia.drawText(limitedArtist, getX() + offsetX, getY() + padding + 12F,
@@ -119,8 +122,8 @@ public class MusicInfoMod extends SimpleHUDMod {
                 String currentLyric = lyricsManager.getCurrentLyric(m, currentTime);
 
                 if (currentLyric != null && !currentLyric.isEmpty()) {
-                    float lyricY = getY() + padding + 24F; // 在艺术家文本下方
-                    String limitedLyric = Skia.getLimitText(currentLyric, Fonts.getRegular(7), width - offsetX - 10);
+                    float lyricY = getY() + padding + 24F;
+                    String limitedLyric = Skia.getLimitText(currentLyric, Fonts.getRegular(7), maxTextWidth);
                     Skia.drawText(limitedLyric, getX() + offsetX, lyricY,
                         ColorUtils.applyAlpha(textColor, 0.9F), Fonts.getRegular(7));
                 }
