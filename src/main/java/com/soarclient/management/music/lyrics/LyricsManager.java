@@ -18,6 +18,22 @@ public class LyricsManager {
 
     static {
         Logger.getLogger("org.jaudiotagger").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.audio").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.audio.AudioFileIO").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.audio.AudioFile").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.audio.mp3").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.audio.mp3.MP3File").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.tag").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.tag.id3").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.tag.id3.AbstractID3v2Tag").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.tag.id3.ID3v23Tag").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.tag.id3.ID3v24Tag").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.tag.id3.framebody").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.tag.id3.framebody.AbstractID3v2FrameBody").setLevel(Level.OFF);
+        Logger.getLogger("org.jaudiotagger.tag.datatype").setLevel(Level.OFF);
+
+        Logger rootLogger = Logger.getLogger("");
+        rootLogger.setLevel(Level.WARNING);
     }
 
     public List<LyricLine> getLyrics(Music music) {
