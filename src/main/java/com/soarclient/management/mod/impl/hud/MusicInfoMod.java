@@ -35,7 +35,13 @@ public class MusicInfoMod extends SimpleHUDMod {
         "setting.simple");
 
     private final BooleanSetting backgroundSetting = new BooleanSetting("setting.background",
-        "setting.background.description", Icon.IMAGE, this, true);
+        "setting.background.description", Icon.IMAGE, this, true) {
+        @Override
+        public boolean isVisible() {
+            String type = typeSetting.getOption();
+            return type.equals("setting.normal");
+        }
+    };
 
     private final BooleanSetting lyricsDisplaySetting = new BooleanSetting("setting.lyrics.display",
         "setting.lyrics.display.description", Icon.TEXT_FIELDS, this, false) {
