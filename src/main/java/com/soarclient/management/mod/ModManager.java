@@ -12,15 +12,7 @@ import com.soarclient.management.mod.api.hud.design.impl.MaterialYouDesign;
 import com.soarclient.management.mod.api.hud.design.impl.SimpleDesign;
 import com.soarclient.management.mod.impl.hud.*;
 import com.soarclient.management.mod.impl.misc.*;
-import com.soarclient.management.mod.impl.player.AutoGGMod;
-import com.soarclient.management.mod.impl.player.ForceMainHandMod;
-import com.soarclient.management.mod.impl.player.FreelookMod;
-import com.soarclient.management.mod.impl.player.HitDelayFixMod;
-import com.soarclient.management.mod.impl.player.NoJumpDelayMod;
-import com.soarclient.management.mod.impl.player.OldAnimationsMod;
-import com.soarclient.management.mod.impl.player.SnapTapMod;
-import com.soarclient.management.mod.impl.player.TaplookMod;
-import com.soarclient.management.mod.impl.player.ZoomMod;
+import com.soarclient.management.mod.impl.player.*;
 import com.soarclient.management.mod.impl.render.BloodParticleMod;
 import com.soarclient.management.mod.impl.render.CustomHandMod;
 import com.soarclient.management.mod.impl.render.FullbrightMod;
@@ -90,8 +82,9 @@ public class ModManager {
 		mods.add(new SnapTapMod());
 		mods.add(new TaplookMod());
 		mods.add(new ZoomMod());
+        mods.add(new AutoTextMod());
 
-		// Render
+        // Render
 		mods.add(new BloodParticleMod());
 		mods.add(new CustomHandMod());
 		mods.add(new FullbrightMod());

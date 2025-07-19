@@ -122,6 +122,21 @@ setting.text=文本
 setting.text.description=自定义水印文本
 mode.icon=图标
 
+mod.autotext.name=自动文本
+mod.autotext.description=通过快捷键自动发送预设文本消息
+setting.text1key=文本1快捷键
+setting.text1key.description=发送第一条文本消息的快捷键
+setting.text1=文本1
+setting.text1.description=要发送的第一条文本消息
+setting.text2key=文本2快捷键
+setting.text2key.description=发送第二条文本消息的快捷键
+setting.text2=文本2
+setting.text2.description=要发送的第二条文本消息
+setting.text3key=文本3快捷键
+setting.text3key.description=发送第三条文本消息的快捷键
+setting.text3=文本3
+setting.text3.description=要发送的第三条文本消息
+
 setting.lyrics.display=歌词显示
 setting.lyrics.display.description=显示当前播放音乐的歌词
 

@@ -172,6 +172,21 @@ setting.text=Text
 setting.text.description=Custom watermark text
 mode.icon=Icon
 
+mod.autotext.name=Auto Text
+mod.autotext.description=Automatically send predefined text messages with keybinds
+setting.text1key=Text 1 Keybind
+setting.text1key.description=Keybind for sending first text message
+setting.text1=Text 1
+setting.text1.description=First text message to send
+setting.text2key=Text 2 Keybind
+setting.text2key.description=Keybind for sending second text message
+setting.text2=Text 2
+setting.text2.description=Second text message to send
+setting.text3key=Text 3 Keybind
+setting.text3key.description=Keybind for sending third text message
+setting.text3=Text 3
+setting.text3.description=Third text message to send
+
 setting.lyrics.display=Lyrics Display
 setting.lyrics.display.description=Show lyrics for the currently playing music
 
