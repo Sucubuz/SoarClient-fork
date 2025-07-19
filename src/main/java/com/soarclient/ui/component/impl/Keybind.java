@@ -27,20 +27,31 @@ public class Keybind extends Component {
 		height = 32;
 	}
 
-	@Override
-	public void draw(double mouseX, double mouseY) {
+    @Override
+    public void draw(double mouseX, double mouseY) {
+        ColorPalette palette = Soar.getInstance().getColorManager().getPalette();
 
-		ColorPalette palette = Soar.getInstance().getColorManager().getPalette();
+        Skia.drawRoundedRect(x, y, width, height, 12, palette.getPrimary());
+        Skia.save();
+        Skia.clip(x, y, width, height, 12);
+        pressAnimation.draw(x, y, width, height, palette.getPrimaryContainer(), 0.12F);
+        Skia.restore();
 
-		Skia.drawRoundedRect(x, y, width, height, 12, palette.getPrimary());
-		Skia.save();
-		Skia.clip(x, y, width, height, 12);
-		pressAnimation.draw(x, y, width, height, palette.getPrimaryContainer(), 0.12F);
-		Skia.restore();
+        String displayText;
+        if (binding) {
+            displayText = "...";
+        } else if (key.equals(InputUtil.UNKNOWN_KEY)) {
+            displayText = "None";
+        } else {
+            displayText = key.getLocalizedText().getString();
+            if (displayText.startsWith("scancode.") || displayText.equals("scancode 0")) {
+                displayText = "Key " + key.getCode();
+            }
+        }
 
-		Skia.drawFullCenteredText(binding ? "..." : key.getLocalizedText().getString(), x + (width / 2),
-				y + (height / 2), palette.getSurface(), Fonts.getMedium(14));
-	}
+        Skia.drawFullCenteredText(displayText, x + (width / 2), y + (height / 2),
+            palette.getSurface(), Fonts.getMedium(14));
+    }
 
 	@Override
 	public void mousePressed(double mouseX, double mouseY, int button) {

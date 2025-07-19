@@ -138,6 +138,21 @@ setting.text=テキスト
 setting.text.description=カスタムウォーターマークテキスト
 mode.icon=アイコン
 
+mod.autotext.name=自動テキスト
+mod.autotext.description=キーバインドで事前定義されたテキストメッセージを自動送信
+setting.text1key=テキスト1キーバインド
+setting.text1key.description=最初のテキストメッセージを送信するキーバインド
+setting.text1=テキスト1
+setting.text1.description=送信する最初のテキストメッセージ
+setting.text2key=テキスト2キーバインド
+setting.text2key.description=2番目のテキストメッセージを送信するキーバインド
+setting.text2=テキスト2
+setting.text2.description=送信する2番目のテキストメッセージ
+setting.text3key=テキスト3キーバインド
+setting.text3key.description=3番目のテキストメッセージを送信するキーバインド
+setting.text3=テキスト3
+setting.text3.description=送信する3番目のテキストメッセージ
+
 mod.weatherdisplay.name=天気表示
 mod.weatherdisplay.description=現在の天気を表示
 
