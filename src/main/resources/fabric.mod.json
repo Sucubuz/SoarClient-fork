@@ -19,8 +19,8 @@
 		"soar.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.16.10",
+		"fabricloader": ">=0.16.14",
 		"fabric": "*",
-		"minecraft": "1.21.4"
+		"minecraft": "1.21.8"
 	}
 }
